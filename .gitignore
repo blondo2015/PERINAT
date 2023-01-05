@@ -1,0 +1,5 @@
+.env/ 
+SRC/db.sqlite3
+SRC/PERINAT/__pycache__
+SRC/PERINAT/.envConfig
+SRC/RESEAU/__pycache__
