@@ -6,7 +6,7 @@ from rest_framework import routers
 
 
 router = routers.DefaultRouter()
-router.register(r'Register', RegisterView)
+# router.register(r'Register', RegisterView)
 
 urlpatterns = [
     path('',acceuil,name='acceuil'), 

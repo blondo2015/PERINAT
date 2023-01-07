@@ -10,8 +10,8 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ["id","username","nom", "telephone","administrateur","dteEnrollement","sexe","foto"]
 
 class RegistrationSerializer(serializers.ModelSerializer):
-    username = serializers.CharField(required=True,validators=[UniqueValidator(queryset=User.objects.all())])
-    password = serializers.CharField(write_only=True, required=True)   
+    # username = serializers.CharField(required=True,validators=[UniqueValidator(queryset=User.objects.all())])
+    # telephone = serializers.CharField(required=True,validators=[UniqueValidator(queryset=User.objects.all())])
     
     class Meta:
         model = User
@@ -19,7 +19,6 @@ class RegistrationSerializer(serializers.ModelSerializer):
             "username",
             "nom",
             "telephone",
-            "administrateur",
             "dteEnrollement",
             "sexe",
             "foto",
@@ -30,9 +29,8 @@ class RegistrationSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = User(
             username=validated_data['username'],
-            telephone=validated_data['telephone'],
             nom=validated_data['nom'],
-            administrateur=validated_data['administrateur'],
+            telephone=validated_data['telephone'],            
             dteEnrollement=validated_data['dteEnrollement'],   
             sexe=validated_data['sexe'], 
             foto=validated_data['foto'],           

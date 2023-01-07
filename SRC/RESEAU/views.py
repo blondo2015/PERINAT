@@ -12,7 +12,7 @@ from rest_framework.viewsets import ModelViewSet
 def acceuil(request):
     return render(request,'Acceuil.html')
 
-class RegisterView(ModelViewSet) :
-    queryset = User.objects.all()
-    permission_classes = (AllowAny,)
-    serializer_class =serializers.RegistrationSerializer
+# class RegisterView(ModelViewSet) :
+#     queryset = User.objects.all()
+#     permission_classes = (AllowAny,)
+#     serializer_class =serializers.RegistrationSerializer

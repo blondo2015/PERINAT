@@ -1,28 +1,85 @@
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from datetime import datetime
 
 
 # Create your models here.
-class User(AbstractUser):
-    username = models.EmailField(max_length=254,unique=True, null=True) 
-    telephone =models.CharField(max_length=9,default="")       
-    nom=models.CharField(max_length=150,default="") 
-    foto=models.ImageField(upload_to='user/',default="",blank=True,null=True)
-    administrateur=models.BooleanField(default=False)
-    suspendu=models.BooleanField(default=False)
-    dteEnrollement=models.DateField(null=True, blank=True)
-    password=models.CharField(max_length=150) 
+
+class UserManager(BaseUserManager):
+    def create_user(self, username, password=None):
+   
+        if not username:
+            raise ValueError('Les utilisateurs doivent avoir une adresse e-mail')
+        user = self.model(
+        username=self.normalize_email(username),
+        )
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+
+    def create_staffuser(self, username, password):
+        user = self.create_user(username,password=password,)
+        user.staff = True
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, username, password):        
+        user = self.create_user(username,password=password,)
+        user.staff = True
+        user.admin = True
+        user.save(using=self._db)
+        return user
+
+class User(AbstractBaseUser):
+    username = models.CharField(max_length=50,unique=True,null=True)         
+    nom=models.CharField(max_length=150,unique=True,default="") 
+    telephone =models.CharField(max_length=9,default="")    
+    dteEnrollement=models.DateField(null=True, blank=True)    
     choixsexe=(
         ("F","F"),
         ("M","M"),
     )
-    sexe=models.CharField(max_length=150,choices=choixsexe,default="F") 
-    mvt_at=models.DateTimeField(auto_now_add=True) 
+    sexe=models.CharField(max_length=150,choices=choixsexe,default="F")
+    foto=models.ImageField(upload_to='user/',default="",blank=True,null=True)
+    mvt_at=models.DateTimeField(auto_now_add=True)  
+    suspendu=models.BooleanField(default=False)  
+    is_active=models.BooleanField(default=True)
+    is_staff=models.BooleanField(default=False)    
+    is_admin=models.BooleanField(default=False)
     created_at=models.DateTimeField(default=datetime.now, blank=True)
     modify_at=models.DateTimeField(default=datetime.now, blank=True)   
     
+          
     USERNAME_FIELD='username'
+    REQUIRED_FIELDS = []
+    
+    objets = UserManager ()
+    
+    def get_full_name(self):
+        # L'utilisateur est identifié par son adresse e-mail
+        return self.username
+    def get_short_name(self):
+        # L'utilisateur est identifié par son adresse e-mail
+        return self.username
+    def __str__(self):
+        return self.username
+    def has_perm(self, perm, obj=None):
+        # "L'utilisateur a-t-il une autorisation spécifique ?"
+        # Réponse la plus simple possible : Oui, toujours
+        return True
+    def has_module_perms(self, app_label):
+        # "L'utilisateur dispose-t-il des autorisations nécessaires pour voir l'application ?`app_label`?"
+        # Réponse la plus simple possible : Oui, toujours
+        return True
+    @property
+    def is_staff(self):
+        "L'utilisateur est-il un membre du personnel ?"
+        return self.staff
+    @property
+    def is_admin(self):
+        "L'utilisateur est-il un membre administrateur?"
+        return self.admin
     
 class Categorie(models.Model):
     cat=models.CharField(max_length=50,default="",blank=True,null=True)
@@ -133,3 +190,32 @@ class Referer(models.Model):
     detailtransport=models.CharField(max_length=150,choices=choixTransport,default="")
     created_at=models.DateTimeField(default=datetime.now, blank=True)
     modified_at=models.DateTimeField(default=datetime.now, blank=True)  
+    
+    
+class UserManager(BaseUserManager):
+    def create_user(self, username, password=None):
+   
+        if not username:
+            raise ValueError('Les utilisateurs doivent avoir une adresse e-mail')
+        user = self.model(
+        email=self.normalize_email(username),
+        )
+        user.set_password(password)
+        user.save(using=self._db)
+        return user
+
+
+    def create_staffuser(self, username, password):
+        user = self.create_user(username,password=password,)
+        user.staff = True
+        user.save(using=self._db)
+        return user
+
+    def create_superuser(self, username, password):        
+        user = self.create_user(username,password=password,)
+        user.staff = True
+        user.admin = True
+        user.save(using=self._db)
+        return user
+
+
