@@ -13,4 +13,5 @@ admin.site.register(Categorie)
 admin.site.register(Equipement)
 admin.site.register(EquipService)
 admin.site.register(Referer)
+admin.site.register(Nivo)
 

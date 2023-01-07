@@ -98,12 +98,11 @@ class Reso(models.Model):
         return self.nonreso
 
 class Nivo(models.Model):
-    nomNivo=models.CharField(max_length=50,default="FOSA")
+    nivo=models.CharField(max_length=50,default="FOSA")
     created_at=models.DateTimeField(default=datetime.now, blank=True)
-    modified_at=models.DateTimeField(default=datetime.now, blank=True)  
-        
+    modified_at=models.DateTimeField(default=datetime.now, blank=True)        
     def __str__(self):
-        return self.nomNivo  
+        return self.nivo  
     
 class Secteur(models.Model):
     nomSecteur=models.CharField(max_length=50,default="PUBLIC")
@@ -115,19 +114,19 @@ class Secteur(models.Model):
 class Enceinte(models.Model):
     code=models.CharField(max_length=10,default="")
     nomEnceinte=models.CharField(max_length=100)
-    adresse=models.CharField(max_length=250,default="")
-    contact1=models.CharField(max_length=13,default="")
-    contact2=models.CharField(max_length=13,default="")
-    category=models.ForeignKey(Categorie,on_delete=models.CASCADE,default=0,null=True,blank=True)
-    reso=models.ForeignKey(Reso,on_delete=models.CASCADE,default=0,null=True,blank=True)
-    nivo=models.ForeignKey(Nivo,on_delete=models.CASCADE,default=0,null=True,blank=True)
+    adresse=models.CharField(max_length=150,default="")
+    contact1=models.CharField(max_length=9,default="",blank=True,null=True)
+    contact2=models.CharField(max_length=9,default="",blank=True,null=True)
     secteur=models.ForeignKey(Secteur,on_delete=models.CASCADE,default=1)
+    category=models.ForeignKey(Categorie,on_delete=models.CASCADE,default=0,null=True,blank=True)
+    reso=models.ForeignKey(Reso,on_delete=models.CASCADE,default=1,null=True,blank=True)   
+    nivo=models.ForeignKey(Nivo,on_delete=models.CASCADE,default=1,null=True,blank=True)    
     parent=models.ForeignKey('self', blank=True, null=True,on_delete=models.CASCADE)
     mvt_at=models.DateTimeField(auto_now_add=True) 
     created_at=models.DateTimeField(default=datetime.now, blank=True)
     modified_at=models.DateTimeField(default=datetime.now, blank=True)  
     def __str__(self):
-        return self.nomNivo  
+        return self.code  
 
 class Service(models.Model):
     nomService=models.CharField(max_length=10,default="NeoNat")
