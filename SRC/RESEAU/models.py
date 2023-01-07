@@ -32,6 +32,7 @@ class UserManager(BaseUserManager):
         return user
 
 class User(AbstractBaseUser): 
+    code=models.CharField(max_length=10 ,default="")
     nom=models.CharField(max_length=150,default="") 
     telephone =models.CharField(max_length=9,unique=True)    
     dteEnrollement=models.DateField(null=True, blank=True)    
@@ -153,8 +154,8 @@ class EquipService(models.Model):
 class EncUser(models.Model):
     pointfocal=models.BooleanField(default=False)
     dte=models.DateTimeField(auto_now_add=True)
-    user=models.ForeignKey(User,on_delete=models.CASCADE) 
-    enceinte=models.ForeignKey(Enceinte,on_delete=models.CASCADE) 
+    user=models.ForeignKey(User,on_delete=models.CASCADE,null=True,blank=True) 
+    enceinte=models.ForeignKey(Enceinte,on_delete=models.CASCADE,null=True,blank=True) 
     created_at=models.DateTimeField(default=datetime.now, blank=True)
     modified_at=models.DateTimeField(default=datetime.now, blank=True)  
 

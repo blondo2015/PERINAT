@@ -5,10 +5,10 @@ from django.conf import settings
 from rest_framework import routers
 
 
-router = routers.DefaultRouter()
+#router = routers.DefaultRouter()
 # router.register(r'Register', RegisterView)
 
 urlpatterns = [
     path('',acceuil,name='acceuil'), 
-    path('api/', include(router.urls)), 
+    path('api/Register',Register,name='Registeruser'), 
 ]
