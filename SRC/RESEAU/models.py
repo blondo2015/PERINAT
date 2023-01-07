@@ -6,35 +6,34 @@ from datetime import datetime
 # Create your models here.
 
 class UserManager(BaseUserManager):
-    def create_user(self, username, password=None):
+    def create_user(self, telephone, password=None):
    
-        if not username:
+        if not telephone:
             raise ValueError('Les utilisateurs doivent avoir une adresse e-mail')
         user = self.model(
-        username=self.normalize_email(username),
+        telephone=self.normalize_email(telephone),
         )
         user.set_password(password)
         user.save(using=self._db)
         return user
 
 
-    def create_staffuser(self, username, password):
-        user = self.create_user(username,password=password,)
+    def create_staffuser(self, telephone, password):
+        user = self.create_user(telephone,password=password,)
         user.staff = True
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, username, password):        
-        user = self.create_user(username,password=password,)
+    def create_superuser(self, telephone, password):        
+        user = self.create_user(telephone,password=password,)
         user.staff = True
         user.admin = True
         user.save(using=self._db)
         return user
 
-class User(AbstractBaseUser):
-    username = models.CharField(max_length=50,unique=True,null=True)         
-    nom=models.CharField(max_length=150,unique=True,default="") 
-    telephone =models.CharField(max_length=9,default="")    
+class User(AbstractBaseUser): 
+    nom=models.CharField(max_length=150,default="") 
+    telephone =models.CharField(max_length=9,unique=True)    
     dteEnrollement=models.DateField(null=True, blank=True)    
     choixsexe=(
         ("F","F"),
@@ -45,25 +44,25 @@ class User(AbstractBaseUser):
     mvt_at=models.DateTimeField(auto_now_add=True)  
     suspendu=models.BooleanField(default=False)  
     is_active=models.BooleanField(default=True)
-    is_staff=models.BooleanField(default=False)    
-    is_admin=models.BooleanField(default=False)
+    staff=models.BooleanField(default=True)    
+    admin=models.BooleanField(default=False)
     created_at=models.DateTimeField(default=datetime.now, blank=True)
     modify_at=models.DateTimeField(default=datetime.now, blank=True)   
     
           
-    USERNAME_FIELD='username'
+    USERNAME_FIELD='telephone'
     REQUIRED_FIELDS = []
     
     objets = UserManager ()
     
     def get_full_name(self):
         # L'utilisateur est identifié par son adresse e-mail
-        return self.username
+        return self.telephone
     def get_short_name(self):
         # L'utilisateur est identifié par son adresse e-mail
-        return self.username
+        return self.telephone
     def __str__(self):
-        return self.username
+        return self.telephone
     def has_perm(self, perm, obj=None):
         # "L'utilisateur a-t-il une autorisation spécifique ?"
         # Réponse la plus simple possible : Oui, toujours
@@ -189,33 +188,4 @@ class Referer(models.Model):
     transport=models.CharField(max_length=150,choices=choixTransport,default="AUTRE MOYEN")
     detailtransport=models.CharField(max_length=150,choices=choixTransport,default="")
     created_at=models.DateTimeField(default=datetime.now, blank=True)
-    modified_at=models.DateTimeField(default=datetime.now, blank=True)  
-    
-    
-class UserManager(BaseUserManager):
-    def create_user(self, username, password=None):
-   
-        if not username:
-            raise ValueError('Les utilisateurs doivent avoir une adresse e-mail')
-        user = self.model(
-        email=self.normalize_email(username),
-        )
-        user.set_password(password)
-        user.save(using=self._db)
-        return user
-
-
-    def create_staffuser(self, username, password):
-        user = self.create_user(username,password=password,)
-        user.staff = True
-        user.save(using=self._db)
-        return user
-
-    def create_superuser(self, username, password):        
-        user = self.create_user(username,password=password,)
-        user.staff = True
-        user.admin = True
-        user.save(using=self._db)
-        return user
-
-
+    modified_at=models.DateTimeField(default=datetime.now, blank=True) 

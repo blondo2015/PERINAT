@@ -7,16 +7,13 @@ from django.contrib.auth.password_validation import validate_password
 class UserSerializer(serializers.ModelSerializer):    
     class Meta:
         model = User
-        fields = ["id","username","nom", "telephone","administrateur","dteEnrollement","sexe","foto"]
+        fields = ["id","nom", "telephone","administrateur","dteEnrollement","sexe","foto"]
 
 class RegistrationSerializer(serializers.ModelSerializer):
-    # username = serializers.CharField(required=True,validators=[UniqueValidator(queryset=User.objects.all())])
-    # telephone = serializers.CharField(required=True,validators=[UniqueValidator(queryset=User.objects.all())])
-    
+        
     class Meta:
         model = User
         fields = [
-            "username",
             "nom",
             "telephone",
             "dteEnrollement",
@@ -27,8 +24,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         extra_kwargs = {"password": {"write_only": True}}
         
     def create(self, validated_data):
-        user = User(
-            username=validated_data['username'],
+        user = User(            
             nom=validated_data['nom'],
             telephone=validated_data['telephone'],            
             dteEnrollement=validated_data['dteEnrollement'],   
@@ -36,6 +32,6 @@ class RegistrationSerializer(serializers.ModelSerializer):
             foto=validated_data['foto'],           
             )
         user.set_password(validated_data['password'])        
-        user.save()
+        #user.save()
         return user    
         
