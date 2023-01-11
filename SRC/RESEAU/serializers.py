@@ -19,7 +19,7 @@ class UneenceinteSerializer(serializers.ModelSerializer):
        fields=['code' ]         
 
 class RegistrationSerializer(serializers.ModelSerializer):
-    code=serializers.CharField(max_length=10,required=True)   
+    code=serializers.CharField(max_length=10,required=True)  
     class Meta:
         model = User
         fields = [
@@ -28,7 +28,6 @@ class RegistrationSerializer(serializers.ModelSerializer):
             "telephone",
             "dteEnrollement",
             "sexe",
-            "foto",
             "password",
         ]
         extra_kwargs = {
@@ -44,15 +43,17 @@ class RegistrationSerializer(serializers.ModelSerializer):
     
     @transaction.atomic     
     def create(self, validated_data):
-        user = User(  
+        user = User(            
             code=validated_data['code'],                  
             nom=validated_data['nom'],
             telephone=validated_data['telephone'],            
             dteEnrollement=validated_data['dteEnrollement'],   
             sexe=validated_data['sexe'], 
-            foto=validated_data['foto'],           
+            #foto=validated_data['foto']#.request.FILES,           
             )
-        user.set_password(validated_data['password'])        
+        user.set_password(validated_data['password']) 
+        #images_data = validated_data['foto'].request.FILES 
+        #user.foto=images_data      
         user.save()
         enceinte=Enceinte.objects.get(code=validated_data['code'])
         enuser=EncUser.objects.create(pointfocal=False)
