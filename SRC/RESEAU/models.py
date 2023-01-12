@@ -41,7 +41,7 @@ class User(AbstractBaseUser):
         ("M","M"),
     )
     sexe=models.CharField(max_length=150,choices=choixsexe,default="F")
-    foto=models.ImageField(upload_to='user/',default="",blank=True,null=True)
+    foto=models.ImageField(upload_to='user/',blank=True,null=True)
     mvt_at=models.DateTimeField(auto_now_add=True)  
     suspendu=models.BooleanField(default=False)  
     is_active=models.BooleanField(default=True)

@@ -7,6 +7,9 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny,IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.authtoken.views import ObtainAuthToken
+from rest_framework.authtoken.models import Token
 
 
 
@@ -18,13 +21,37 @@ def acceuil(request):
 def Register(request, *args, **kwargs):
     if request.method == 'POST':        
         serializer=serializers.RegistrationSerializer(data=request.data)
-        if serializer.is_valid():            
-            # user_id=serializer.data['user_id']
-            # user=User.objects.get(id=user_id)
-            # user.foto=request.FILES.get('fotos')
-            # user.save()
+        if serializer.is_valid():       
             serializer.save()            
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)    
-    
+
+
+class CustomAuthTokenlogin(ObtainAuthToken):    
+    def post(self, request, *args, **kwargs):
+        serializer = self.serializer_class(data=request.data,context={'request': request})
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        if user.foto:
+            return Response({
+            'token': token.key,
+            'user_id': user.pk,            
+            'code':user.code,
+            'nom':user.nom,
+            'telephone':user.telephone,
+            'dteEnrollement':user.dteEnrollement, 
+            'foto':user.foto.url,
+            'sexe' :user.sexe,              
+            })  
+        return Response({
+            'token': token.key,
+            'user_id': user.pk,            
+            'code':user.code,
+            'nom':user.nom,
+            'telephone':user.telephone,
+            'dteEnrollement':user.dteEnrollement, 
+            'foto':"",
+            'sexe' :user.sexe,              
+            })            

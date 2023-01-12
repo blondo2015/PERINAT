@@ -8,7 +8,8 @@ from django.db import transaction
 
 
 #Serializer to Get User Details using Django Token Authentication
-class UserSerializer(serializers.ModelSerializer):    
+class UserSerializer(serializers.ModelSerializer): 
+    foto=serializers.ImageField(max_length=None, allow_empty_file=True, use_url=True)  
     class Meta:
         model = User
         fields = ["id","nom", "telephone","administrateur","dteEnrollement","sexe","foto"]
