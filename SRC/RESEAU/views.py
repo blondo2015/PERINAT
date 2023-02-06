@@ -20,22 +20,39 @@ from rest_framework.authtoken.models import Token
 
 #  gestioin de l'admin 
 
-def connexion(request):
-    
-    if request.method=='POST':
-        form=ConnexionForms(request.POST)
-        if form.is_valid():
-            user=authenticate(username=form.cleaned_data['telephone'],password=form.cleaned_data['password']) 
-            if user is not None:
-               login(request,user)
-               return redirect('Menuprincipal')         
+# controle e session 
+def idsession(request):
+    if 'idss' in request.session:
+        logged_id =request.session['idss']
+        try:
+            user=User.objects.get(pk=logged_id)
+            if user!=None:
+               return user
+            return None   
+        except User.Doesnotexist:
+            pass    
+    return None
+
+def connexion(request): 
+    pcontrole=idsession(request) 
+    if pcontrole is not None:
+       return redirect('Menuprincipal') 
+    else:    
+        if request.method=='POST':
+            form=ConnexionForms(request.POST)
+            if form.is_valid():
+                user=authenticate(username=form.cleaned_data['telephone'],password=form.cleaned_data['password']) 
+                if user is not None:
+                    login(request,user)
+                    request.session['idss']=user.pk
+                    return redirect('Menuprincipal')         
+                else:
+                    form=ConnexionForms()
+                    return render(request,'connexion.html',{'form':form,"msg":"vous n'avez pas le droit de vous connecter","dte":datetime.now})
             else:
                 form=ConnexionForms()
-                return render(request,'connexion.html',{'form':form,"msg":"vous n'avez pas le droit de vous connecter","dte":datetime.now})
+                return render(request,'connexion.html',{'form':form,"msg":" les données en entrée ne sont pas vailidées","dte":datetime.now})
         else:
-            form=ConnexionForms()
-            return render(request,'connexion.html',{'form':form,"msg":" les données en entrée ne sont pas vailidées","dte":datetime.now})
-    else:
             form=ConnexionForms()
             return render(request,'connexion.html',{'form':form,"dte":datetime.now})        #   
         
@@ -44,7 +61,8 @@ def connexion(request):
 # gest ion des api 
 @login_required
 def acceuil(request):
-    return render(request,'menu.html')
+    user=idsession(request) 
+    return render(request,'menu.html',{'user':user})
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
