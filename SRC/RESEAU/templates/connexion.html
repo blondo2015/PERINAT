@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PERINAT | connexion</title>
+    {% load static %}
+    <link rel="stylesheet"  type="text/css" href="{% static 'css/csslocal/style.css'%}">
+</head>
+<body>
+    <div class="navbar">        
+            <h1> RESEAU PERINAT </h1>
+            <H4>{{dte}}</H4>      
+    </div>
+    <div class="cardre">
+        <div class="title"><h2>Connexion</h2></div>
+        <div class="detail">
+        <h3>
+            {{msg}}
+        </h3>
+        <form  method="POST">
+            {% csrf_token %}
+            <table>
+              {{form.as_table}}    
+            </table>
+            <input type="submit" value="connexion" id="btncon">        
+          </form>
+        </div>        
+    </div>
+
+</body>
+</html>

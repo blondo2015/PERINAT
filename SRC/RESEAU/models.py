@@ -1,3 +1,4 @@
+from email.errors import MessageError
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager, PermissionsMixin
 from datetime import datetime
@@ -6,12 +7,10 @@ from datetime import datetime
 # Create your models here.
 
 class UserManager(BaseUserManager):
-    def create_user(self, telephone, password=None):
-   
+    def create_user(self, telephone, password=None):   
         if not telephone:
-            raise ValueError('Les utilisateurs doivent avoir une adresse e-mail')
-        user = self.model(
-        telephone=self.normalize_email(telephone),
+            raise ValueError('Les utilisateurs doivent avoir un numero de telephone')
+        user = self.model(telephone=self.normalize_email(telephone),
         )
         user.set_password(password)
         user.save(using=self._db)
@@ -54,7 +53,7 @@ class User(AbstractBaseUser):
     USERNAME_FIELD='telephone'
     REQUIRED_FIELDS = []
     
-    objets = UserManager ()
+    objects  = UserManager ()
     
     def get_full_name(self):
         # L'utilisateur est identifié par son adresse e-mail
@@ -143,7 +142,7 @@ class Equipement(models.Model):
     
     def __str__(self):
         return self.nomEquip  
-class EquipService(models.Model):
+class Appartenir(models.Model):
     service=models.ForeignKey(Service,on_delete=models.CASCADE)  
     equipement=models.ForeignKey(Equipement,on_delete=models.CASCADE) 
     pu=models.FloatField(default=0)
@@ -160,7 +159,8 @@ class EncUser(models.Model):
     modified_at=models.DateTimeField(default=datetime.now, blank=True)  
 
 
-class patient(models.Model):
+class Patient(models.Model):
+    user=models.ForeignKey(User,on_delete=models.CASCADE,default=1)
     nompatient=models.CharField(max_length=250) 
     dtenaiss=models.DateField(blank=True,null=True)
     lieunaiss=models.CharField(max_length=100, null=True,default="")
@@ -174,10 +174,11 @@ class patient(models.Model):
     sexe=models.CharField(max_length=150,choices=choixsexe,default="F") 
     created_at=models.DateTimeField(default=datetime.now, blank=True)
     modified_at=models.DateTimeField(default=datetime.now, blank=True)    
-    
-class Referer(models.Model):
-    dterefencement=models.DateField(default="")
-    mvt_at=models.DateTimeField(auto_now_add=True) 
+
+
+class Demande(models.Model):
+    patient=models.ForeignKey(Patient, max_length=25,on_delete=models.CASCADE,default="")
+    encuser=models.ForeignKey(EncUser,max_length=100,on_delete=models.CASCADE,default="")
     caregiven=models.CharField(max_length=150,default="")
     choixTransport=(
     ("AMBULANCE", "AMBULANCE"),
@@ -185,7 +186,14 @@ class Referer(models.Model):
     ("TRANSPORT EN COMMUN", "TRANSPORT EN COMMUN"),
     ("AUTRE MOYEN", "AUTRE MOYEN"),
 )
-    transport=models.CharField(max_length=150,choices=choixTransport,default="AUTRE MOYEN")
-    detailtransport=models.CharField(max_length=150,choices=choixTransport,default="")
+    transport=models.CharField(max_length=150,choices=choixTransport,default="AUTRE MOYEN") 
+    detailtransport=models.CharField(max_length=150,default="")
+    created_at=models.DateTimeField(default=datetime.now, blank=True)
+    modified_at=models.DateTimeField(default=datetime.now, blank=True) 
+    
+class Referer(models.Model):
+    dterefencement=models.DateField(default="")
+    parent=models.ForeignKey('self', blank=True, null=True,on_delete=models.CASCADE)
+    mvt_at=models.DateTimeField(auto_now_add=True)     
     created_at=models.DateTimeField(default=datetime.now, blank=True)
     modified_at=models.DateTimeField(default=datetime.now, blank=True) 

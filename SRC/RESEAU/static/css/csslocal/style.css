@@ -1,0 +1,78 @@
+/* body{
+   
+} */
+
+body{   
+    margin-top: 0;
+    padding: 0;
+    background: rgba(0, 0, 0, 0.5) url(/static/img/perinat.jpg);
+    height: 500;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-blend-mode: darken;
+    margin: 0;
+}
+.navbar{ 
+    margin-top:0;   
+    background-color: rgb(73, 112, 161);
+    color: white;
+    text-shadow: 0 0 5px rgb(27, 27, 27);
+    font-family: sans-serif ;
+    font-weight: 12em;
+    font-size:bold;
+  
+}
+.navbar h1 {
+    margin-left: 5%;
+   display: inline-block;
+}
+.navbar h4 {
+    display: inline-block;
+    padding-left: 60%;
+}
+
+.cardre{
+    margin-top:10%;
+    background-color: rgb(215, 218, 226);
+    border: 1px solid rgb(211, 189, 189);
+    border-radius: 10px;
+    width: 30%;
+    margin-left: 35%;
+    padding-bottom: 5px;
+}
+.cardre .title{
+    border-bottom: 1px solid rgb(65, 59, 59);
+    font-family: sans-serif ;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 0;
+
+}
+.cardre .detail{
+    position: absolute;
+    background-color: rgb(255, 255, 255); 
+    width: 30%;
+    height: 30%;   
+}
+
+.cardre .detail h3{
+    margin-left: 25px;
+    padding-top: 1px; 
+}
+
+input{
+    margin-left: 10px;
+    padding-top: 7px;
+    padding-bottom: 7px;
+}
+label{
+    margin-left: 40px;
+    margin-bottom: 10px;
+}
+#btncon{
+    margin-left: 150px;
+    margin-top: 10px;
+    padding-left: 40px;
+    padding-right: 40px;
+}

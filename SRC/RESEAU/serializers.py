@@ -36,10 +36,10 @@ class RegistrationSerializer(serializers.ModelSerializer):
             "code":{"read_only":True}
             }
         
-    def get_code(self):
-        enceinte=Enceinte.objects.filter(code=self.code)
+    def validate_code(self, value):
+        enceinte=Enceinte.objects.filter(code=value)
         if len(enceinte)!=1:
-            return self.code
+            return value
         raise ValidationError("ce code nexiste pas ou autres chose")
     
     @transaction.atomic     
@@ -63,3 +63,33 @@ class RegistrationSerializer(serializers.ModelSerializer):
         enuser.save()
         return user    
         
+        
+class Patientserialize(serializers.ModelSerializer):
+   
+    class Meta:
+        model=Patient
+        fields= '__all__'#['nompatient','dtenaiss','lieunaiss','poids','petitpoids','pathologie','sexe','user',]
+        extra_kwargs = {
+            "nompatient": {"required": True},
+            "poids":{"required":True}
+            } 
+        
+        def create(self,validated_data):
+            return Patient.objects.create(**validated_data) 
+             
+class Encuserserializer(serializers.ModelSerializer):
+    class Meta:
+        model=EncUser
+        fields='__all__'    
+                 
+class  Encuserserialize(serializers.ModelSerializer):
+    patient=Patientserialize(read_only=True)
+    encuser=Encuserserializer(read_only=True)
+    class Meta:
+        model=EncUser
+        fields= ['caregiven','transport','detailtransport','patient','encuser',]
+    
+    # def to_representation(self, instance):
+    #     self.fields['patient'] =  Patientserialize(read_only=True)
+    #     self.fields['encuser'] =  Encuserserializer(read_only=True)
+    #     return super(Encuserserialize, self).to_representation(instance)                     
