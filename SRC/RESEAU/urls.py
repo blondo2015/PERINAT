@@ -8,8 +8,10 @@ from django.conf import settings
 # router.register(r'Register', RegisterView)
 
 urlpatterns = [
-    path('',connexion,name='connexion'), 
-    path('Menuprincipal',acceuil,name='Menuprincipal'),
+    path('',connexion,name='connexion'),
+    path('Dashboard/',acceuil,name='Dashboard'),
+    path('Fosa/',listefosa,name='Fosa'),
+    #les routes des apis
     path('api/Register',Register,name='Registeruser'), 
     path('api/Patient/<date_start>)',apipaient,name='Apipatient'),
     path('api/connexion/',CustomAuthTokenlogin.as_view(), name='apiconnexion'),  
