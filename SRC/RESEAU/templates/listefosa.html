@@ -1,4 +1,57 @@
 {% extends 'base.html'%}{%block page%}FOSA{%endblock page%}
 {%block utilisateur %}{{user.nom}} {%endblock utilisateur%}
-{%block titrepage %} FOSA {%endblock titrepage%}
-{%block btnAction %} {%endblock btnAction%}
+{%block titrepage %} Fosa {%endblock titrepage%}
+{%block btnAction %}<a href="#">Ajouter</a> {%endblock btnAction%}
+{%block contenu %} 
+<label for="reso-select">Réseau</label>
+<select name="reso" id="reso-select">
+    <option value="">Un réseau</option> 
+   {% for i in reso %}
+   <option value={{ i.id }} name="Réseau">{{forloop.counter}}-{{ i.nonreso }}</option>
+   {%endfor %}
+</select>
+<label for="cat-select">Catégorie</label>
+<select name="cat" id="cat-select">
+    <option value="">une catégorie</option> 
+   {% for i in cat %}
+   <option value={{ i.id }} name="categirie">{{forloop.counter}}-{{ i.cat }}</option>
+   {%endfor %}
+</select>
+<label for="nivo-select">Niveau</label>
+<select name="nivo" id="nivo-select">
+    <option value="">Un niveau</option> 
+   {% for i in nivo %}
+   <option value={{ i.id }} name="niveau">{{forloop.counter}}-{{ i.nivo }}</option>
+   {%endfor %}
+</select>
+<label for="sect-select">Niveau</label>
+<select name="sect" id="sect-select">
+    <option value="">Un secteur</option> 
+   {% for i in secteur %}
+   <option value={{ i.id }} name="niveau">{{forloop.counter}}-{{ i.nomSecteur }}</option>
+   {%endfor %}
+</select>
+
+{%endblock contenu%}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

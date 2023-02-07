@@ -63,9 +63,20 @@ def acceuil(request):
 
 @login_required 
 def listefosa(request):
-    if request.user.is_authenticated: 
+    if request.user.is_authenticated:
+        reso=Reso.objects.all() 
+        cat=Categorie.objects.all()
         listfosa=Enceinte.objects.all()
-        return render(request,'listefosa.html',{'user':request.user,'listefosa':listfosa})
+        nivo=Nivo.objects.all()
+        secteur=Secteur.objects.all()
+        return render(request,'listefosa.html',
+                      {
+                        'user':request.user,
+                        'listefosa':listfosa,
+                        'reso':reso,'cat':cat,
+                        'nivo':nivo,
+                        'secteur':secteur,
+                        })
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
