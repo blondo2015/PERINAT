@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render,get_object_or_404
 from .models import *
 from .forms import *
 from . import serializers
@@ -7,6 +7,7 @@ from datetime import datetime
 # les classes de l'admin 
 from  django.contrib.auth import authenticate,login,logout
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, EmptyPage,PageNotAnInteger
 
 # les classes du drf
 from rest_framework import status
@@ -65,19 +66,60 @@ def acceuil(request):
 def listefosa(request):
     if request.user.is_authenticated:
         reso=Reso.objects.all() 
-        cat=Categorie.objects.all()
-        listfosa=Enceinte.objects.all()
+        cat=Categorie.objects.all()        
         nivo=Nivo.objects.all()
         secteur=Secteur.objects.all()
-        return render(request,'listefosa.html',
-                      {
+        listfosa=Enceinte.objects.all().order_by('-id')
+        p = Paginator(listfosa, 10)
+        page_number = request.GET.get('page') 
+        try:
+            po = p.page(page_number)
+        except PageNotAnInteger: 
+            po = p.page(1)   
+        except EmptyPage:
+            po = p.page(p.num_pages)
+        return render(request,'listefosa.html',{
                         'user':request.user,
-                        'listefosa':listfosa,
-                        'reso':reso,'cat':cat,
+                        'reso':reso,
+                        'cat':cat,
                         'nivo':nivo,
                         'secteur':secteur,
+                        'po':po,
                         })
+        
+@login_required 
+def triefosa(request):
+    if request.user.is_authenticated:
+        categorie=request.POST.get['cat']   
+        reso=request.POST.get['reso'] 
+        nivo=request.POST.get['nivo']
+        listtrie=Enceinte.objects.filter(reso=reso,nivo=nivo,category=categorie).all()    
+        return render(request,'Enceintetrie.html',{'user':request.user,'page':'Trie Enceinte','listefosa':listtrie,})  
 
+
+@login_required 
+def Enceintecreation(request):
+    if request.user.is_authenticated:
+        if request.method=='POST':
+            form=EnceinteForms(request.POST or None)
+            if form.is_valid():
+                enc=form.save(commit=False)
+                enc.codens()
+                enc.save()
+                form=EnceinteForms()
+                return render(request,'Enceinte.html',{'form':form,'user':request.user,'msg':'message enregistré avec succès'})
+            else:
+                form=EnceinteForms() 
+                return render(request,'Enceinte.html',{'form':form,'user':request.user,'msg':'données invalides'})
+        else:
+            form=EnceinteForms() 
+            return render(request,'Enceinte.html',{'form':form,'user':request.user,})
+            
+    else:
+        return redirect ('connexion') 
+    
+    
+         
 @api_view(['POST'])
 @permission_classes([AllowAny])
 def Register(request, *args, **kwargs):
@@ -152,3 +194,27 @@ def apipaient(request,date_start=None):
             serializer.save()
             return Response(serializer.data,status=status.HTTP_201_CREATED)
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)    
+    
+def detailenceinte(request,id):
+    if request.user.is_authenticated:
+        dtl=get_object_or_404(Enceinte,id=id)
+        list=Enceinte.objects.filter(parent=dtl)
+        return render(request,'enceintDetail.html', {'dtl':dtl,'user':request.user,'list':list})
+    else:
+        return redirect ('connexion') 
+    
+def enceinteupdate(request,id):
+    if request.user.is_authenticated:
+        enc=get_object_or_404(Enceinte,id=id)
+        form=EnceinteForms(request.POST or None,instance=enc)
+        if request.method=='POST':            
+            if form.is_valid():
+                enc=form.save()
+                return redirect('Fosa')
+            return render(request,'enceintUpdate.html', {'form':form,'user':request.user,'enc':enc})
+        return render(request,'enceintUpdate.html', {'form':form,'user':request.user,'enc':enc})
+    return redirect('connexion')
+            
+            
+            
+                

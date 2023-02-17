@@ -11,6 +11,10 @@ urlpatterns = [
     path('',connexion,name='connexion'),
     path('Dashboard/',acceuil,name='Dashboard'),
     path('Fosa/',listefosa,name='Fosa'),
+    path('Fosadd/',Enceintecreation,name='Fosadd'),
+    path('FosaDetail/<id>',detailenceinte,name='FosaDetail'),
+    path('FosaUpdate/<id>',enceinteupdate,name='FosaUpdate'),
+    path('TrieEnceinte',triefosa,name='trienenceinte'),
     #les routes des apis
     path('api/Register',Register,name='Registeruser'), 
     path('api/Patient/<date_start>)',apipaient,name='Apipatient'),

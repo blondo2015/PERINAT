@@ -1,0 +1,60 @@
+{% extends 'base.html'%}
+{%block page%}FORMATIONS SANITAIRES{%endblock page%}
+{%block utilisateur %}{{user.nom}} {%endblock utilisateur%}
+{% load static %}
+{%block btnAction %}
+<a href="/FosaUpdate/{{dtl.id}}"><img src="{% static 'img/icone/modify.svg' %}" alt="Bootstrap" width="26" height="26"></a>
+<a href="{% url 'Dashboard' %}"><img src="{% static 'img/icone/printer.svg' %}" alt="Bootstrap" width="26" height="26"></a> 
+{%endblock btnAction%}
+{%block titrepage %} FORMATIONS SANITAIRES {%endblock titrepage%}
+{%block debut %}Detail de la formation sanitaire :{{dtl.nomEnceinte}} {%endblock debut%}
+{% block msg%}{{msg}}{%endblock msg%}
+{%block contenu %}
+<style>
+    .cclass{
+        display:flex;
+    }
+    .fieldliste dt {
+        display: block;
+        width: 500px;
+        float: left;
+        text-align: right;
+        font-weight: bold;
+    }   
+    .fieldliste dd {
+        display: block;   
+        float: left; 
+        width: 400px;   
+        padding-left: 10px;
+        text-align: left;
+    }
+</style>
+
+<div class="cclass">
+    <div class="fieldliste">
+        <div>
+            <dl> 
+                <dt>Secteur  :</dt>
+                <dd>{{dtl.secteur.nom}}</dd>   
+                <dt>Categorie  :</dt>
+                <dd>{{dtl.category.cat}}</dd> 
+                <dt>Niveau  :</dt>
+                <dd>{{dtl.nivo.nivo}}</dd> 
+                <dt>Réseau  :</dt>
+                <dd>{{dtl.reso.nomreso}}</dd> 
+                <dt>Fosa superviseur :</dt>
+                <dd>{{dtl.parent.code}} - {{dtl.parent.nomEnceinte}}</dd>
+                <dt>Code formation sanitaire :</dt>
+                <dd>{{dtl.code}}</dd>
+                <dt>Adresse :</dt>
+                <dd>{{dtl.adresse}}</dd>
+                <dt>Premier contact :</dt>
+                <dd>{{dtl.contact1}}</dd>
+                <dt>Deuxieme contact  :</dt>
+                <dd>{{dtl.contact2}}</dd> 
+            </dl>            
+        </div>
+    </div>
+</div>
+
+ {%endblock contenu%}

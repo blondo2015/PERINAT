@@ -1,0 +1,74 @@
+{% extends 'base.html'%}{%block page%}Trie Enceinte{%endblock page%}
+{%block utilisateur %}{{user.nom}} {%endblock utilisateur%}
+{%block titrepage %} Trie Enceinte {%endblock titrepage%}
+{%block btnAction %}{%endblock btnAction%}
+{%block contenu %} 
+
+<!-- les tableaux  -->
+<STYLE>    
+    table {
+        margin-top: 15px;
+        border-collapse:collapse;       
+        max-width:950px;
+        min-width:800px; 
+        border: 2px solid gray;       
+        }
+        #malageur{
+            width: 40%;
+        }  
+        #malageur1{
+            width: 25%;
+        }        
+        caption {
+        caption-side:bottom;
+        font-weight:bold;
+        font-style:italic;
+        margin:4px;
+        }            th, td {
+                border: 1px solid gray;
+                }
+        
+        th, td {
+        height: 24px;
+        padding:4px;
+        width: 10%;
+        vertical-align:middle;
+        }    
+        .rowtitle {
+        background: #5889a0;
+        font-weight:bold;
+        }
+</STYLE>
+<table>
+    <thead>
+        <tr class="rowtitle">
+            <th >N°</th>
+            <th >CODE</th>
+            <th  id="malageur">FORMATION SANITAIRE</th>
+            <th  > PARENT </th>
+            <th  > CONTACT </th>
+            <th  id="malageur"> ADRESSE </th>           
+            <th >ACTION</th>
+        </tr>        
+    </thead>
+    <tbody> 
+        {% for m in listefosa %} 
+        <tr>
+            <!-- /detailautoecole/{{m.id}} -->
+            <!-- /modificationAutoecole/{{m.id}} -->
+            <td>{{forloop.counter}}</td>
+            <td><a href="">{{m.code}}</a> </td>
+            <td>{{m.nomEnceinte}}</td>
+            <td>{{m.parent}}</td>
+            <td>{{m.contact1}}</td>
+            <td>{{m.adresse}}</td>
+            <td><button>
+                <a href="">Modifier</a>
+            </button></td>
+          </tr>  
+        {% endfor %}      
+    </tbody>
+    </table>
+
+
+{%endblock contenu%}

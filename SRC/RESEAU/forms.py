@@ -13,3 +13,7 @@ class ConnexionForms(forms.Form):
             raise forms.ValidationError("le numero de telephone doit avoir 9 chiffres") 
         return telephone    
     
+class EnceinteForms(forms.ModelForm):
+    class Meta:
+        model=Enceinte
+        fields=('secteur','category','reso','nivo','parent','nomEnceinte','adresse','contact1','contact2',)

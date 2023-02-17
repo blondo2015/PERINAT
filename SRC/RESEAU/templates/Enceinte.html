@@ -1,0 +1,13 @@
+{% extends 'base.html'%}
+{%block page%}FOSA{%endblock page%}
+{%block utilisateur %}{{user.nom}} {%endblock utilisateur%}
+{%block titrepage %} FORMATIONS SANITAIRES {%endblock titrepage%}
+{%block debut %} Edition d'une Formation Sanitaire {%endblock debut%}
+{% block msg%}{{msg}}{%endblock msg%}
+{%block contenu %}
+<form action="{% url 'Fosadd' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}    
+        {{form.as_p}}    
+    <input type="submit" value="Save">
+</form>
+ {%endblock contenu%}

@@ -1,0 +1,16 @@
+{% extends 'base.html'%}{%block page%}FOSA{%endblock page%}
+{%block utilisateur %}{{user.nom}} {%endblock utilisateur%}
+{%block titrepage %} FORMATIONS SANITAIRES  {%endblock titrepage%}
+{%block debut %} Modifier :{{enc.nomEnceinte}} {%endblock debut%}
+{% load static %}
+{%block btnAction %}
+{%endblock btnAction%}
+{%block contenu %} 
+<form action="" class="login" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{form.as_p}}
+    <p>
+      <input type="submit" value="Modifier" class="btn btn-success">
+    </p>   
+</form>
+{% endblock contenu %}

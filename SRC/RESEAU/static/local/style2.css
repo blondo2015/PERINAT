@@ -1,4 +1,4 @@
-html{
+/* html{
     background:rgb(250, 250, 250);
     font-family:'Open Sans',Arial, Helvetica, sans-serif;   
     height:100%;
@@ -145,3 +145,23 @@ main .row{
 }
 
 
+ */
+
+ body{
+    margin:0 ;
+    width: 100%;
+    height: 100%;
+}
+ .container{
+    margin:0 ;
+    background:rgb(250, 250, 250);
+    font-family:'Open Sans',Arial, Helvetica, sans-serif;   
+ }
+
+ .entete{
+    margin:0 ;
+    background:#7284a2;
+ }
+ .corps-2{
+    border: #3c3f46 solid 1px;
+ }

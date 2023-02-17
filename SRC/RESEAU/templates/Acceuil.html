@@ -1,6 +1,32 @@
-{% extends 'base.html'%}{%block main%}
+{% extends 'base.html'%}
+{%block page%}DASHOARD{%endblock page%}
+{%block utilisateur %}{{user.nom}} {%endblock utilisateur%}
+{% load static %}
+{%block btnAction %}
+{%endblock btnAction%}
+{%block titrepage %} DASHOARD {%endblock titrepage%}
+{%block debut %}DASHOARD{%endblock debut%}
+{% block msg%}{%endblock msg%}
 
-{%endblock main %}
+{%block contenu %} 
+<style>
+    #car1{
+        padding: 25px;
+        border-radius: 2px;
+        box-shadow: 0 0 5px rgb(27, 27, 27);
+        color: black;
+    }
+</style>
+<div class="contener text-center">
+    <div class="row justify-content-around">
+        <div id="bg-dark text-dark"> patient 20</div>
+        <div id="car1 text-dark"> patient 20</div>
+        <div id="car1 text-dark"> patient 20</div>
+    </div>
+</div>
+{%endblock contenu%}
+
+
 
 
 
