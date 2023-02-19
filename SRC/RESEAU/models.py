@@ -128,8 +128,8 @@ class Enceinte(models.Model):
     adresse = models.CharField(max_length=150, default="")
     contact1 = models.CharField(max_length=9, default="", blank=True, null=True)
     contact2 = models.CharField(max_length=9, default="", blank=True, null=True)
-    secteur = models.ForeignKey(Secteur, on_delete=models.CASCADE, default=1)
-    category = models.ForeignKey(Categorie, on_delete=models.CASCADE, default=0, null=True, blank=True)
+    secteur = models.ForeignKey(Secteur, on_delete=models.CASCADE, default=1, null=True, blank=True)
+    category = models.ForeignKey(Categorie, on_delete=models.CASCADE, default=1, null=True, blank=True)
     reso = models.ForeignKey(Reso, on_delete=models.CASCADE, default=1, null=True, blank=True)
     nivo = models.ForeignKey(Nivo, on_delete=models.CASCADE, default=1, null=True, blank=True)
     parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE)
@@ -188,7 +188,6 @@ class EncUser(models.Model):
 
 
 class Patient(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, default=1)
     nompatient = models.CharField(max_length=250)
     dtenaiss = models.DateField(blank=True, null=True)
     lieunaiss = models.CharField(max_length=100, null=True, default="")

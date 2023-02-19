@@ -7,7 +7,7 @@
 <a href="{% url 'Dashboard' %}"><img src="{% static 'img/icone/printer.svg' %}" alt="Bootstrap" width="26" height="26"></a> 
 {%endblock btnAction%}
 {%block titrepage %} FORMATIONS SANITAIRES {%endblock titrepage%}
-{%block debut %}Detail de la formation sanitaire :{{dtl.nomEnceinte}} {%endblock debut%}
+{%block debut %}Detail de la formation sanitaire :{{dtl.code}} - {{dtl.nomEnceinte}} {%endblock debut%}
 {% block msg%}{{msg}}{%endblock msg%}
 {%block contenu %}
 <style>
@@ -44,8 +44,6 @@
                 <dd>{{dtl.reso.nomreso}}</dd> 
                 <dt>Fosa superviseur :</dt>
                 <dd>{{dtl.parent.code}} - {{dtl.parent.nomEnceinte}}</dd>
-                <dt>Code formation sanitaire :</dt>
-                <dd>{{dtl.code}}</dd>
                 <dt>Adresse :</dt>
                 <dd>{{dtl.adresse}}</dd>
                 <dt>Premier contact :</dt>

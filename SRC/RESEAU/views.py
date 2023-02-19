@@ -63,12 +63,29 @@ def acceuil(request):
 
 
 @login_required 
-def listefosa(request):
-    if request.user.is_authenticated:
-        reso=Reso.objects.all() 
-        cat=Categorie.objects.all()        
-        nivo=Nivo.objects.all()
-        secteur=Secteur.objects.all()
+def listefosa(request):       
+    form=filtrenceinteforms(request.POST or None)
+    if form.is_valid():        
+        listfosa=Enceinte.objects.filter(
+            reso=form.cleaned_data['reso'],
+            nivo=form.cleaned_data['nivo'],
+            secteur=form.cleaned_data['secteur'],
+            category=form.cleaned_data['category']
+            ).order_by('-id')
+        p = Paginator(listfosa, 10)
+        page_number = request.GET.get('page') 
+        try:
+            po = p.page(page_number)
+        except PageNotAnInteger: 
+            po = p.page(1)   
+        except EmptyPage:
+            po = p.page(p.num_pages)
+        return render(request,'listefosa.html',{
+                        'user':request.user,
+                        'po':po,
+                        'form':form,
+                        })
+    else:
         listfosa=Enceinte.objects.all().order_by('-id')
         p = Paginator(listfosa, 10)
         page_number = request.GET.get('page') 
@@ -80,21 +97,36 @@ def listefosa(request):
             po = p.page(p.num_pages)
         return render(request,'listefosa.html',{
                         'user':request.user,
-                        'reso':reso,
-                        'cat':cat,
-                        'nivo':nivo,
-                        'secteur':secteur,
                         'po':po,
+                        'form':form,
                         })
+            
         
 @login_required 
 def triefosa(request):
     if request.user.is_authenticated:
-        categorie=request.POST.get['cat']   
-        reso=request.POST.get['reso'] 
-        nivo=request.POST.get['nivo']
-        listtrie=Enceinte.objects.filter(reso=reso,nivo=nivo,category=categorie).all()    
-        return render(request,'Enceintetrie.html',{'user':request.user,'page':'Trie Enceinte','listefosa':listtrie,})  
+        cat_id=request.GET.get['cat_id']   
+        reso_id=request.GET.get['reso_id'] 
+        nivo_id=request.GET.get['nivo_id']
+        secteur_id=request.GET.get['sect_id']
+        listtrie=Enceinte.objects.filter(reso_id=reso_id,nivo_id=nivo_id,category_id=cat_id,secteur_id=secteur_id).all().order_by('-id') 
+        p = Paginator(listtrie, 10)
+        page_number = request.GET.get('page') 
+        try:
+            po = p.page(page_number)
+        except PageNotAnInteger: 
+            po = p.page(1)   
+        except EmptyPage:
+            po = p.page(p.num_pages)
+            
+        return render(request,'listefosa.html',{
+                        'user':request.user,
+                        'po':po,
+                        })   
+    else:
+        return redirect('connexion')  
+        
+            
 
 
 @login_required 
@@ -215,6 +247,44 @@ def enceinteupdate(request,id):
         return render(request,'enceintUpdate.html', {'form':form,'user':request.user,'enc':enc})
     return redirect('connexion')
             
-            
+def patientfiltre(request):
+    if request.user.is_authenticated:
+        if request.method=='POST':
+            form=patientfiltreform(request.POST or None)
+            if form.is_valid():
+                list=Patient.objects.filter(nompatient_contains=form.cleaned_data['rechercher']).order_by('-created_at')
+                p=Paginator(list,10)
+                page_number = request.GET.get('page') 
+                try :
+                    po=p.page(page_number) 
+                except PageNotAnInteger:
+                    po=p.page(1) 
+                except EmptyPage:
+                    po=p.page(p.num_pages)
+                return render(request,'patient.html',{'form':form,'po':po,'user':request.user}) 
+            else: 
+                list=Patient.objects.filter().order_by('-created_at')
+                p=Paginator(list,10)
+                page_number = request.GET.get('page') 
+                try :
+                    po=p.page(p.page_number) 
+                except PageNotAnInteger:
+                    po=p.page(1) 
+                except EmptyPage:
+                    po=p.page(p.num_pages)
+                return render(request,'patient.html',{'form':form,'po':po,'user':request.user})
+        else:
+            form=patientfiltreform()
+            list=Patient.objects.filter().order_by('-created_at')
+            p=Paginator(list,10)
+            page_number = request.GET.get('page') 
+            try :
+                po=p.page(page_number) 
+            except PageNotAnInteger:
+                po=p.page(1) 
+            except EmptyPage:
+                po=p.page(p.num_pages)
+            return render(request,'patient.html',{'form':form,'po':po,'user':request.user})
+    return redirect('connexion')                    
             
                 
