@@ -1,22 +1,39 @@
 {% extends 'base.html'%}{%block page%}PATIENT{%endblock page%}
 {%block utilisateur %}{{user.nom}} {%endblock utilisateur%}
 {%block titrepage %} LISTE DES PATIENTS {%endblock titrepage%}
-{%block debut %} Liste des patients {%endblock debut%}
+{%block debut %}
+<style>
+    .cccc{
+        padding-top: 0;
+        height: 37px;
+        padding-bottom: 0;
+        margin-left: 2px;
+    }
+</style>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-7">
+{% load static %}
+        </div>
+        <div class="col-5">
+            <form class="d-flex"action="{% url 'Patientlist' %}"  method="POST" enctype="multipart/form-data" >
+                {% csrf_token%}
+                    {{form.as_p}}
+                    <!-- <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="le"> -->
+                    <button class="btn btn-outline-success  cccc" type="submit">Search</button>
+             </form>
+        </div>
+    </div>    
+  </div>
+
+{%endblock debut%}
 {% load static %}
 {%block btnAction %}
 <a href="{% url 'Dashboard' %}"><img src="{% static 'img/icone/printer.svg' %}" alt="Bootstrap" width="26" height="26"></a> 
 {%endblock btnAction%}
 {%block contenu %} 
-    <form action="{% url 'Patientlist' %}"  method="POST" enctype="multipart/form-data" class="row g-2">
-        {% csrf_token %}
-        {{form.as_p}}
-        <div col-2>
-          <button type="submit">rechercher</button>
-        </div>
-    </form>       
-</dir>
 
-<table class="table table-striped table-hover>
+<table class="table table-striped table-hover">
     <thead>
         <tr class="rowtitle">
             <th >N°</th>

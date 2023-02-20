@@ -14,8 +14,7 @@ urlpatterns = [
     path('Fosadd/',Enceintecreation,name='Fosadd'),
     path('FosaDetail/<id>',detailenceinte,name='FosaDetail'),
     path('FosaUpdate/<id>',enceinteupdate,name='FosaUpdate'),
-    path('Patientlist/',patientfiltre,name='Patientlist'),
-    path('TrieEnceinte',triefosa,name='trienenceinte'),
+    path('Patientlist/',patientfiltre,name='Patientlist'),    
     #les routes des apis
     path('api/Register',Register,name='Registeruser'), 
     path('api/Patient/<date_start>)',apipaient,name='Apipatient'),
