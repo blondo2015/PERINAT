@@ -1,6 +1,7 @@
 from django.shortcuts import render,get_object_or_404
 from .models import *
 from .forms import *
+from .filter import *
 from . import serializers
 from django.shortcuts import render,redirect,get_object_or_404
 from datetime import datetime
@@ -19,6 +20,8 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.authtoken.models import Token
 
+
+
 #  gestioin de l'admin 
 
 # controle e session 
@@ -28,8 +31,6 @@ def connexion(request):
         print('deconnexion',request.user)
         logout(request)
         return redirect('connexion')
-        # print(request.user)
-        # return redirect('Dashboard') 
     else:
         if request.method=='POST':
             form=ConnexionForms(request.POST)
@@ -63,92 +64,17 @@ def acceuil(request):
 
 
 @login_required 
-def listefosa(request): 
-    listfosa=Enceinte.objects.all().order_by('-id')      
-    form=filtrenceinteforms(request.POST or None)
-    if form.is_valid():
-        reso=form.cleaned_data['reso']
-        nivo=form.cleaned_data['nivo']
-        secteur=form.cleaned_data['secteur']
-        category=form.cleaned_data['category']
-        
-        if reso is not None:
-            if nivo is not None:
-                if  secteur is not None:
-                    if category is not None:
-                        listfosa=Enceinte.objects.filter(reso=reso,nivo=nivo,secteur=secteur,category=category)
-                    else:
-                        listfosa=Enceinte.objects.filter(reso=reso,nivo=nivo,secteur=secteur) 
-                else:
-                    if category is not None:
-                        listfosa=Enceinte.objects.filter(reso=reso,nivo=nivo,category=category)
-                    else:
-                        listfosa=Enceinte.objects.filter(reso=reso,nivo=nivo) 
-            else:
-                if  secteur is not None:
-                    if category is not None:
-                        listfosa=Enceinte.objects.filter(reso=reso,secteur=secteur,category=category)
-                    else:
-                        listfosa=Enceinte.objects.filter(reso=reso,secteur=secteur) 
-                else:
-                    if category is not None:
-                        listfosa=Enceinte.objects.filter(reso=reso,category=category)
-                    else:
-                        listfosa=Enceinte.objects.filter(reso=reso) 
-        else:
-            if nivo is not None:
-                if  secteur is not None:
-                    if category is not None:
-                        listfosa=Enceinte.objects.filter(nivo=nivo,secteur=secteur,category=category)
-                    else:
-                        listfosa=Enceinte.objects.filter(nivo=nivo,secteur=secteur) 
-                else:
-                    if category is not None:
-                        listfosa=Enceinte.objects.filter(nivo=nivo,category=category)
-                    else:
-                        listfosa=Enceinte.objects.filter(nivo=nivo) 
-            else:
-                if  secteur is not None:
-                    if category is not None:
-                        listfosa=Enceinte.objects.filter(secteur=secteur,category=category)
-                    else:
-                        listfosa=Enceinte.objects.filter(secteur=secteur) 
-                else:
-                    if category is not None:
-                        listfosa=Enceinte.objects.filter(category=category)
-                    else:
-                        listfosa=Enceinte.objects.all()     
-        p = Paginator(listfosa.order_by('-id'), 10)
-        page_number = request.GET.get('page') 
-        try:
-            po = p.page(page_number)
-        except PageNotAnInteger: 
-            po = p.page(1)   
-        except EmptyPage:
-            po = p.page(p.num_pages)
-        return render(request,'listefosa.html',{
+def listefosa(request):       
+    listfosa=Enceinte.objects.all().order_by('-id')    
+    myfilter=EnceinteFilter(request.GET,queryset=listfosa)
+    listfosa=myfilter.qs
+    return render(request,'listefosa.html',{
                         'user':request.user,
-                        'po':po,
-                        'form':form,
+                        'myfilter':myfilter, 
+                        'list':listfosa                       
                         })
-    else:
-        listfosa=Enceinte.objects.all().order_by('-id')
-        p = Paginator(listfosa, 10)
-        page_number = request.GET.get('page') 
-        try:
-            po = p.page(page_number)
-        except PageNotAnInteger: 
-            po = p.page(1)   
-        except EmptyPage:
-            po = p.page(p.num_pages)
-        return render(request,'listefosa.html',{
-                        'user':request.user,
-                        'po':po,
-                        'form':form,
-                        })         
-        
-
-
+    
+ 
 @login_required 
 def Enceintecreation(request):
     if request.user.is_authenticated:
@@ -250,8 +176,17 @@ def apipaient(request,date_start=None):
 def detailenceinte(request,id):
     if request.user.is_authenticated:
         dtl=get_object_or_404(Enceinte,id=id)
-        list=Enceinte.objects.filter(parent=dtl)
-        return render(request,'enceintDetail.html', {'dtl':dtl,'user':request.user,'list':list})
+        liste=Servico.objects.filter(enceinte_id=id)
+        listequip=Appartenir.objects.filter(service__enceinte_id=id)
+        myfilter=Equipementfilter(request.GET,queryset=listequip)
+        listequip=myfilter.qs
+        return render(request,'enceintDetail.html', {
+            'dtl':dtl,
+            'user':request.user,
+            'list':liste,
+            'listequip':listequip,
+            'myfilter':myfilter
+            })
     else:
         return redirect ('connexion') 
     
@@ -306,5 +241,16 @@ def patientfiltre(request):
             po=p.page(p.num_pages)
         return render(request,'patient.html',{'form':form,'po':po,'user':request.user})
                     
-        
-                
+@login_required
+def detailpatient(request,id):
+    patient=get_object_or_404(Patient,id=id)
+    list=Referer.objects.filter(demande__patient_id=id) 
+    p=Paginator(list.order_by('-created_at'),5)
+    page_number = request.GET.get('page') 
+    try:
+        po=p.page(page_number)   
+    except PageNotAnInteger:
+        po=p.page(1)   
+    except EmptyPage:
+        po=p.page(p.num_pages)
+    return render(request,'patientdetail.html',{'po':po,'user':request.user,'patient':patient})  

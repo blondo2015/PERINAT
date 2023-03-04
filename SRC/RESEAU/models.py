@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from datetime import datetime
+import uuid
 
 # Create your models here.
 
@@ -152,12 +153,14 @@ class Enceinte(models.Model):
             self.code=str(code.codenivo)+str(len(list)+1)
             return self.code   
 
-class Service(models.Model):
+class Servico(models.Model):
     nomService = models.CharField(max_length=10, default="NeoNat")
     cautionAdminission = models.FloatField(default=0)
     enceinte = models.ForeignKey(Enceinte, on_delete=models.CASCADE)
     created_at = models.DateTimeField(default=datetime.now, blank=True)
     modified_at = models.DateTimeField(default=datetime.now, blank=True)
+    def __str__(self):
+        return self.nomService
 
 
 class Equipement(models.Model):
@@ -170,7 +173,7 @@ class Equipement(models.Model):
 
 
 class Appartenir(models.Model):
-    service = models.ForeignKey(Service, on_delete=models.CASCADE)
+    service = models.ForeignKey(Servico, on_delete=models.CASCADE)
     equipement = models.ForeignKey(Equipement, on_delete=models.CASCADE)
     pu = models.FloatField(default=0)
     periodicite = models.CharField(max_length=10)
@@ -205,21 +208,22 @@ class Patient(models.Model):
 
 class Demande(models.Model):
     patient = models.ForeignKey(Patient, max_length=25, on_delete=models.CASCADE, default="")
-    encuser = models.ForeignKey(EncUser, max_length=100, on_delete=models.CASCADE, default="")
-    caregiven = models.CharField(max_length=150, default="")
+    encuser = models.ForeignKey(EncUser, max_length=100, on_delete=models.CASCADE, default="")    
+    detailtransport = models.CharField(max_length=150, default="")
+    created_at = models.DateTimeField(default=datetime.now, blank=True)
+    modified_at = models.DateTimeField(default=datetime.now, blank=True)
+
+
+class Referer(models.Model): 
+    demande=models.ForeignKey(Demande,on_delete=models.CASCADE,default=1,null=True,related_name="referer")   
     choixTransport = (
         ("AMBULANCE", "AMBULANCE"),
         ("VEHICULE PERSONNEL", "VEHICULE PERSONNEL"),
         ("TRANSPORT EN COMMUN", "TRANSPORT EN COMMUN"),
         ("AUTRE MOYEN", "AUTRE MOYEN"),
     )
+    caregiven = models.CharField(max_length=150, default="")
     transport = models.CharField(max_length=150, choices=choixTransport, default="AUTRE MOYEN")
-    detailtransport = models.CharField(max_length=150, default="")
-    created_at = models.DateTimeField(default=datetime.now, blank=True)
-    modified_at = models.DateTimeField(default=datetime.now, blank=True)
-
-
-class Referer(models.Model):
     dterefencement = models.DateField(default="")
     parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE)
     mvt_at = models.DateTimeField(auto_now_add=True)

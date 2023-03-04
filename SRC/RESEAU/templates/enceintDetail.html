@@ -10,49 +10,92 @@
 {%block debut %}Detail de la formation sanitaire :{{dtl.code}} - {{dtl.nomEnceinte}} {%endblock debut%}
 {% block msg%}{{msg}}{%endblock msg%}
 {%block contenu %}
-<style>
-    .cclass{
-        display:flex;
-    }
-    .fieldliste dt {
-        display: block;
-        width: 500px;
-        float: left;
-        text-align: right;
-        font-weight: bold;
-    }   
-    .fieldliste dd {
-        display: block;   
-        float: left; 
-        width: 400px;   
-        padding-left: 10px;
-        text-align: left;
-    }
-</style>
 
-<div class="cclass">
-    <div class="fieldliste">
-        <div>
-            <dl> 
-                <dt>Secteur  :</dt>
-                <dd>{{dtl.secteur.nom}}</dd>   
-                <dt>Categorie  :</dt>
-                <dd>{{dtl.category.cat}}</dd> 
-                <dt>Niveau  :</dt>
-                <dd>{{dtl.nivo.nivo}}</dd> 
-                <dt>Réseau  :</dt>
-                <dd>{{dtl.reso.nomreso}}</dd> 
-                <dt>Fosa superviseur :</dt>
-                <dd>{{dtl.parent.code}} - {{dtl.parent.nomEnceinte}}</dd>
-                <dt>Adresse :</dt>
-                <dd>{{dtl.adresse}}</dd>
-                <dt>Premier contact :</dt>
-                <dd>{{dtl.contact1}}</dd>
-                <dt>Deuxieme contact  :</dt>
-                <dd>{{dtl.contact2}}</dd> 
-            </dl>            
-        </div>
+<div class="row">
+    <div class="col-8">
+        <div class="card card-body">
+                <span>Secteur :<strong>  {{dtl.secteur.nom}}   </strong>  Categorie  : <strong>  {{dtl.category.cat}}  </strong>  Niveau  : <strong> {{dtl.nivo.nivo}} </strong></span>
+                <br>
+                <span>Fosa superviseur : <strong> {{dtl.parent.code}} - {{dtl.parent.nomEnceinte}} </strong> Premier contact : <strong> {{dtl.contact1}} </strong> </span>
+                <br>
+                <span>Réseau  : <strong> {{dtl.reso.nomreso}} </strong>Deuxieme contact  : <strong> {{dtl.contact2}} </strong> </span>
+        </div>       
+    </div>
+    <div class="col-4">
+        <div class="card card-body">
+            <div class="row justify-content-end">
+                <div class="col-2"></div>
+                <div class="col-2">
+                    <a href="{% url 'Fosadd' %}"><img src="{% static 'img/icone/ajouter.svg' %}" alt="Bootstrap" width="26" height="26"></a> 
+                </div>
+            </div>
+           <table class="table table-striped table-hover">
+                <thead>
+                    <tr class="rowtitle">
+                        <th >N°</th>
+                        <th >SERVICE</th>
+                        <th >CAUTION</th>        
+                        <th >ACTION</th>
+                    </tr>        
+                </thead>
+                <tbody>
+                    {% for m in list %}
+                    <tr>
+                        <td>{{forloop.counter}}</td>
+                        <td>{{m.nomService}}</td>
+                        <td>{{m.cautionAdminission}}</td>
+                        <td>
+                            <a href="/FosaUpdate/{{dtl.id}}"><img src="{% static 'img/icone/modify.svg' %}" alt="Bootstrap" width="26" height="26"></a>
+                            <a href="{% url 'Dashboard' %}"><img src="{% static 'img/icone/printer.svg' %}" alt="Bootstrap" width="26" height="26"></a> 
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>    
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <div class="card card-body">
+            <div class="row justify-content-end">
+                <div class="col-5"></div>
+                <div class="col-4">
+                    <form action="" method="get">
+                        {{myfilter.form}}
+                        <button type="submit" class="btn btn-primary">chercher</button>
+                    </form>
+                </div>
+            </div>
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr class="rowtitle">
+                        <th >N°</th>
+                        <th >EQUIPEMENT</th>
+                        <th >PRIX UNITAIRE</th>
+                        <th >PERIODICITE</th>
+                        <th >SERVICE</th>        
+                        <th >ACTION</th>
+                    </tr>        
+                </thead>
+                <tbody>
+                    {% for m in listequip %}
+                    <tr>
+                        <td>{{forloop.counter}}</td>
+                        <td>{{m.equipement.nomEquip}}</td>
+                        <td>{{m.pu}}</td>
+                        <td>{{m.periodicite}}</td>
+                        <td>{{m.service.nomService}}</td>
+                        <td>
+                            <a href="/FosaUpdate/{{dtl.id}}"><img src="{% static 'img/icone/modify.svg' %}" alt="Bootstrap" width="26" height="26"></a>
+                            <a href="{% url 'Dashboard' %}"><img src="{% static 'img/icone/printer.svg' %}" alt="Bootstrap" width="26" height="26"></a> 
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div> 
     </div>
 </div>
 
- {%endblock contenu%}
+{%endblock contenu%}

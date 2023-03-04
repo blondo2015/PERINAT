@@ -35,4 +35,9 @@ class patientfiltreform(forms.Form):
                                 attrs={
                                     'PlaceHolder':'rechercher le patient',
                                     'class':'form-control',
-                                }))        
+                                }))  
+    
+class Service(forms.ModelForm):
+    class Meta:
+        model=Servico
+        fields=['enceinte','nomService','cautionAdminission']          
