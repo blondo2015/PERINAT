@@ -3,6 +3,7 @@ from .models import *
 from django.contrib.auth import login,logout,authenticate
 
 
+
 class ConnexionForms(forms.Form): 
     telephone=forms.CharField(max_length=9)
     password=forms.CharField(required=True,widget=forms.PasswordInput)   
@@ -15,7 +16,7 @@ class ConnexionForms(forms.Form):
 class filtrenceinteforms(forms.ModelForm):
     class Meta:
         model=Enceinte
-        fields=('secteur','category','reso','nivo')
+        fields=('secteur','categorie','reseau','niveau')
         ''' widgets={
             'secteur':forms.Select(attrs={'class':'col-3 form-control'}),
             'category':forms.Select(attrs={'class':'col-3 form-control'}),
@@ -26,7 +27,7 @@ class filtrenceinteforms(forms.ModelForm):
 class EnceinteForms(forms.ModelForm):
     class Meta:
         model=Enceinte
-        fields=('secteur','category','reso','nivo','parent','nomEnceinte','adresse','contact1','contact2',)
+        fields=('secteur','categorie','reseau','niveau','parent','nomEnceinte','adresse','contact1','contact2',)
         
 class patientfiltreform(forms.Form):
     rechercher=forms.CharField(max_length=20,
@@ -40,4 +41,15 @@ class patientfiltreform(forms.Form):
 class Service(forms.ModelForm):
     class Meta:
         model=Servico
-        fields=['enceinte','nomService','cautionAdminission']          
+        fields=['enceinte','service','cautionAdminission']
+        
+class CreateService(forms.ModelForm):
+    class Meta:
+        model=Servico
+        fields=['service','cautionAdminission']
+        
+
+class EquipementForms(forms.ModelForm):
+    model=Equipement
+    fields=('__all__')        
+                          

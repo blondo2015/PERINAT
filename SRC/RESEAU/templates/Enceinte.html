@@ -5,9 +5,29 @@
 {%block debut %} Edition d'une Formation Sanitaire {%endblock debut%}
 {% block msg%}{{msg}}{%endblock msg%}
 {%block contenu %}
+<style>
+
+</style>
 <form action="{% url 'Fosadd' %}" method="post" enctype="multipart/form-data">
     {% csrf_token %}    
         {{form.as_p}}    
     <input type="submit" value="Save">
 </form>
  {%endblock contenu%}
+ {% block script%}
+ <script>
+    const $form = $('form'); // sélectionne la balise <form>
+    const $pElements = $form.find('p'); // sélectionne toutes les balises <p> dans la balise <form>
+    const $divRow = $('<div class="row">');
+    const $divcol1 = $('<div class="col-md-6">'); // crée une nouvelle balise <div>
+    const $divcol2 = $('<div class="col-md-6">');
+
+    // enveloppe les 5 premières balises <p> avec la nouvelle balise <div>
+    $pElements.slice(0, 5).appendTo($divcol1);
+    $pElements.slice(5, 9).appendTo($divcol2);
+    $divRow.append($divcol1);
+    $divRow.append($divcol2);
+    // ajoute la nouvelle balise <div> à la fin de la balise <form>
+    $form.append($divRow);
+</script>
+ {%endblock script%}

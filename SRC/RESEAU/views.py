@@ -49,8 +49,6 @@ def connexion(request):
         else:
             form=ConnexionForms()
             return render(request,'connexion.html',{'form':form,"dte":datetime.now})
-        
- 
 
 def deconnexion(request):
     print('deconnextion',request.user)
@@ -68,10 +66,18 @@ def listefosa(request):
     listfosa=Enceinte.objects.all().order_by('-id')    
     myfilter=EnceinteFilter(request.GET,queryset=listfosa)
     listfosa=myfilter.qs
+    p=Paginator(listfosa,8)
+    page_number = request.GET.get('page') 
+    try:
+        po=p.page(page_number)   
+    except PageNotAnInteger:
+        po=p.page(1)   
+    except EmptyPage:
+        po=p.page(p.num_pages)
     return render(request,'listefosa.html',{
                         'user':request.user,
                         'myfilter':myfilter, 
-                        'list':listfosa                       
+                        'po':po                       
                         })
     
  
@@ -177,13 +183,21 @@ def detailenceinte(request,id):
     if request.user.is_authenticated:
         dtl=get_object_or_404(Enceinte,id=id)
         liste=Servico.objects.filter(enceinte_id=id)
+        p=Paginator(liste,2)
+        page_number = request.GET.get('page') 
+        try:
+            po=p.page(page_number)   
+        except PageNotAnInteger:
+            po=p.page(1)   
+        except EmptyPage:
+            po=p.page(p.num_pages)
         listequip=Appartenir.objects.filter(service__enceinte_id=id)
-        myfilter=Equipementfilter(request.GET,queryset=listequip)
+        myfilter=Appartenirfilter(request.GET,queryset=listequip)
         listequip=myfilter.qs
         return render(request,'enceintDetail.html', {
             'dtl':dtl,
             'user':request.user,
-            'list':liste,
+            'po':po,
             'listequip':listequip,
             'myfilter':myfilter
             })
@@ -244,8 +258,8 @@ def patientfiltre(request):
 @login_required
 def detailpatient(request,id):
     patient=get_object_or_404(Patient,id=id)
-    list=Referer.objects.filter(demande__patient_id=id) 
-    p=Paginator(list.order_by('-created_at'),5)
+    liste=Referer.objects.filter(demande__patient_id=id) 
+    p=Paginator(liste.order_by('-created_at'),5)
     page_number = request.GET.get('page') 
     try:
         po=p.page(page_number)   
@@ -254,3 +268,58 @@ def detailpatient(request,id):
     except EmptyPage:
         po=p.page(p.num_pages)
     return render(request,'patientdetail.html',{'po':po,'user':request.user,'patient':patient})  
+
+@login_required 
+def createservice(request,id):
+    enceinte=Enceinte.objects.get(id=id)
+    if request.method=='POST':
+        form=CreateService(request.POST or None)
+        if form.is_valid():           
+            service=form.save()
+            service.enceinte=enceinte
+            service.save()
+            form=CreateService()
+            return render(request,'createservice.html',{
+                'form':form,
+                'msg':'enregistrement effectué avec succès',
+                'user':request.user,
+                'enc':enceinte
+                })
+        else:
+            form=CreateService()
+            return render(request,'createservice.html',{
+                'form':form,
+                'msg':'verifiez vos champs',
+                'user':request.user,
+                'enc':enceinte
+                })
+    else: 
+        form=CreateService()
+        return render(request,'createservice.html',{
+                'form':form,
+                'user':request.user,
+                'enc':enceinte
+                })       
+                
+@login_required            
+def listedesequipements(request):
+    liste=Appartenir.objects.all()
+    myFilter=Appartenirfilter2(request.GET,queryset=liste)
+    liste=myFilter.qs
+    return render(request,'listequipement.html',{'list':liste,'user':request.user,'myFilter':myFilter})
+
+
+@login_required
+def listutilisateur(request):
+    listuser=EncUser.objects.all()
+    myFilter=EncuserFilter(request.GET,queryset=listuser)
+    listuser=myFilter.qs
+    p=Paginator(listuser,8)
+    page_number = request.GET.get('page') 
+    try:
+        po=p.page(page_number)
+    except PageNotAnInteger :
+        po=p.page(1)
+    except EmptyPage:
+        po=p.page(p.num_pages) 
+    return render(request,'user.html',{'user':request.user,'po':po,'myFilter':myFilter})          

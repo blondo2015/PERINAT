@@ -1,0 +1,17 @@
+{% extends 'base.html'%}
+{%block page%}FORMATIONS SANITAIRES{%endblock page%}
+{%block utilisateur %}{{user.nom}} {%endblock utilisateur%}
+{% load static %}
+{%block btnAction %}
+<a href="{% url 'Dashboard' %}"><img src="{% static 'img/icone/printer.svg' %}" alt="Bootstrap" width="26" height="26"></a> 
+{%endblock btnAction%}
+{%block titrepage %} CREATION D'UN SERVICE POUR <strong>{{enc.code}} - {{enc.nomEnceinte}}</strong>{%endblock titrepage%}
+{%block debut %} NOUVEAU SERVICE {%endblock debut%}
+{% block msg%}{{msg}}{%endblock msg%}
+{%block contenu %}
+<form action="/createservice/{{enc.id}}" method="post" enctype="multipart/form-data">
+    {% csrf_token%}
+    {{form.as_p}}
+    <button type="submit" class="btn btn-success">Enregistrement</button>
+</form>
+{%endblock contenu%}

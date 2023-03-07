@@ -1,5 +1,5 @@
 from django.urls import path,include
-from .views import connexion,acceuil,Register,listefosa,enceinteupdate,Enceintecreation,detailenceinte,patientfiltre,detailpatient,CustomAuthTokenlogin,apipaient
+from .views import *
 from django.conf.urls.static import  static
 from django.conf import settings
 
@@ -15,7 +15,10 @@ urlpatterns = [
     path('FosaDetail/<id>',detailenceinte,name='FosaDetail'),
     path('FosaUpdate/<id>',enceinteupdate,name='FosaUpdate'),
     path('Patientlist/',patientfiltre,name='Patientlist'), 
-    path('patientDetail/<id>',detailpatient,name='patientDetail'),   
+    path('patientDetail/<id>',detailpatient,name='patientDetail'),
+    path('createservice/<id>',createservice,name='createservice'),
+    path('listequipement/',listedesequipements,name='listequipement'),   
+    path('listeuser/',listutilisateur,name='listeuser'),
     #les routes des apis
     path('api/Register',Register,name='Registeruser'), 
     path('api/Patient/<date_start>)',apipaient,name='Apipatient'),

@@ -86,32 +86,32 @@ class User(AbstractBaseUser):
 
 
 class Categorie(models.Model):
-    cat = models.CharField(max_length=50, default="", blank=True, null=True)
+    categorie = models.CharField(max_length=50, default="", blank=True, null=True)
     mvt_at = models.DateTimeField(auto_now_add=True)
     created_at = models.DateTimeField(default=datetime.now, blank=True)
     modified_at = models.DateTimeField(default=datetime.now, blank=True)
 
     def __str__(self):
-        return self.cat
+        return self.categorie
 
 
 class Reso(models.Model):
-    nomreso = models.CharField(max_length=50, default="CENTRE")
+    reseau = models.CharField(max_length=50, default="CENTRE")
     created_at = models.DateTimeField(default=datetime.now, blank=True)
     modified_at = models.DateTimeField(default=datetime.now, blank=True)
 
     def __str__(self):
-        return self.nomreso
+        return self.reseau
 
 
 class Nivo(models.Model):
-    nivo = models.CharField(max_length=50, default="FOSA")
+    niveau = models.CharField(max_length=50, default="FOSA")
     codenivo=models.CharField(max_length=2,default="FS")
     created_at = models.DateTimeField(default=datetime.now, blank=True)
     modified_at = models.DateTimeField(default=datetime.now, blank=True)
 
     def __str__(self):
-        return self.nivo
+        return self.niveau
 
 
 class Secteur(models.Model):
@@ -130,37 +130,37 @@ class Enceinte(models.Model):
     contact1 = models.CharField(max_length=9, default="", blank=True, null=True)
     contact2 = models.CharField(max_length=9, default="", blank=True, null=True)
     secteur = models.ForeignKey(Secteur, on_delete=models.CASCADE, default=1, null=True, blank=True)
-    category = models.ForeignKey(Categorie, on_delete=models.CASCADE, default=1, null=True, blank=True)
-    reso = models.ForeignKey(Reso, on_delete=models.CASCADE, default=1, null=True, blank=True)
-    nivo = models.ForeignKey(Nivo, on_delete=models.CASCADE, default=1, null=True, blank=True)
+    categorie = models.ForeignKey(Categorie, on_delete=models.CASCADE, default=1, null=True, blank=True)
+    reseau = models.ForeignKey(Reso, on_delete=models.CASCADE, default=1, null=True, blank=True)
+    niveau = models.ForeignKey(Nivo, on_delete=models.CASCADE, default=1, null=True, blank=True)
     parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE)
     mvt_at = models.DateTimeField(auto_now_add=True)
     created_at = models.DateTimeField(default=datetime.now, blank=True)
     modified_at = models.DateTimeField(default=datetime.now, blank=True)
 
     def __str__(self):
-        return self.code
+        return self.nomEnceinte
     def codens(self):
         code=""
         try:
-            code=Nivo.objects.get(nivo=self.nivo)
+            code=Nivo.objects.get(nivo=self.niveau)
         except:
             pass    
-        list=Enceinte.objects.filter(nivo=self.nivo)
-        if len(list)<10:
-            self.code=str(code.codenivo)+"0"+str(len(list)+1)
-        elif len(list)>=10 :
-            self.code=str(code.codenivo)+str(len(list)+1)
+        liste=Enceinte.objects.filter(nivo=self.niveau)
+        if len(liste)<10:
+            self.code=str(code.codenivo)+"0"+str(len(liste)+1)
+        elif len(liste)>=10 :
+            self.code=str(code.codenivo)+str(len(liste)+1)
             return self.code   
 
 class Servico(models.Model):
-    nomService = models.CharField(max_length=10, default="NeoNat")
+    service = models.CharField(max_length=25, default="")
     cautionAdminission = models.FloatField(default=0)
-    enceinte = models.ForeignKey(Enceinte, on_delete=models.CASCADE)
+    enceinte = models.ForeignKey(Enceinte, on_delete=models.CASCADE,blank=True,null=True)
     created_at = models.DateTimeField(default=datetime.now, blank=True)
     modified_at = models.DateTimeField(default=datetime.now, blank=True)
     def __str__(self):
-        return self.nomService
+        return self.service
 
 
 class Equipement(models.Model):
@@ -179,6 +179,8 @@ class Appartenir(models.Model):
     periodicite = models.CharField(max_length=10)
     created_at = models.DateTimeField(default=datetime.now, blank=True)
     modified_at = models.DateTimeField(default=datetime.now, blank=True)
+    def __str__(self):
+        return self.service.nomService
 
 
 class EncUser(models.Model):
@@ -197,6 +199,10 @@ class Patient(models.Model):
     poids = models.DecimalField(max_digits=5, decimal_places=2)
     petitpoids = models.BooleanField(default=False)
     pathologie = models.CharField(max_length=250)
+    ethnie=models.CharField(max_length=15,default="")
+    religion=models.CharField(max_length=15,default="")
+    profession_tuteur=models.CharField(max_length=25,default="")
+    contact=models.CharField(max_length=15,default="")
     choixsexe = (
         ("F", "F"),
         ("M", "M"),

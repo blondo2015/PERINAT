@@ -48,7 +48,7 @@
         </tr>        
     </thead>
     <tbody> 
-        {% for m in list %} 
+        {% for m in po.object_list %} 
         <tr>
             <td>{{forloop.counter}}</td>
             <td><a href="/FosaDetail/{{m.id}}">{{m.code}}</a> </td>
@@ -65,9 +65,7 @@
         {% endfor %}      
     </tbody>
 </table>
-
-
-  <!-- <div >
+<div >
     {% if po.has_previous %}
         <a href="?page=1"><<</a>
         <a href="?page={{ po.previous_page_number }}"><</a>
@@ -77,7 +75,7 @@
         <a href="?page={{ po.next_page_number }}">></a>
         <a href="?page={{ po.paginator.num_pages }}">>></a>
     {% endif %}
-</div><br /> -->
+</div><br />
 {%endblock contenu%}
 
 
