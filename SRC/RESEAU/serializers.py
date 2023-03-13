@@ -8,11 +8,11 @@ from django.db import transaction
 
 
 #Serializer to Get User Details using Django Token Authentication
-class UserSerializer(serializers.ModelSerializer): 
+class UserSerializer(serializers.ModelSerializer):     
     foto=serializers.ImageField(max_length=None, allow_empty_file=True, use_url=True)  
     class Meta:
         model = User
-        fields = ["id","nom", "telephone","administrateur","dteEnrollement","sexe","foto"]
+        fields = ["id","nom", "telephone","email","administrateur","dteEnrollement","sexe","foto"]
 
 class UneenceinteSerializer(serializers.ModelSerializer):
     class Meta:
@@ -64,7 +64,7 @@ class RegistrationSerializer(serializers.ModelSerializer):
         return user    
         
         
-class Patientserialize(serializers.ModelSerializer):
+class Patientserializer(serializers.ModelSerializer):
    
     class Meta:
         model=Patient
@@ -76,18 +76,22 @@ class Patientserialize(serializers.ModelSerializer):
         
         def create(self,validated_data):
             return Patient.objects.create(**validated_data) 
-             
+
+class Damandeserializer(serializers.ModelSerializer):
+    class Meta:
+        model=Demande
+        fields='__all__'  
+        
+class Referencementserializer(serializers.ModelSerializer):
+    class Meta:
+        model=Referer
+        fields='__all__'                  
 class Encuserserializer(serializers.ModelSerializer):
     class Meta:
         model=EncUser
         fields='__all__'    
                  
-class  Encuserserialize(serializers.ModelSerializer):
-    patient=Patientserialize(read_only=True)
-    encuser=Encuserserializer(read_only=True)
-    class Meta:
-        model=EncUser
-        fields= ['caregiven','transport','detailtransport','patient','encuser',]
+
     
     # def to_representation(self, instance):
     #     self.fields['patient'] =  Patientserialize(read_only=True)

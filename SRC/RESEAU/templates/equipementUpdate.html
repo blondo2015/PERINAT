@@ -1,8 +1,8 @@
 {% extends 'base.html'%}
 {%block page%}FOSA{%endblock page%}
 {%block utilisateur %}{{user.nom}} {%endblock utilisateur%}
-{%block titrepage %} FORMATIONS SANITAIRES {%endblock titrepage%}
-{%block debut %} Edition d'une Formation Sanitaire {%endblock debut%}
+{%block titrepage %} MODIFICATION EQUIPEMENT {%endblock titrepage%}
+{%block debut %} Modifier <strong>{{equip.nomEquip}}</strong> {%endblock debut%}
 {% block msg%}{{msg}}{%endblock msg%}
 {%block contenu %}
 <style>
@@ -14,12 +14,11 @@
 <div class="row">
     <div class="col-4"></div>
     <div class="col-4">
-        <form action="{% url 'Fosadd' %}" method="post" id="EnceinteForms" enctype="multipart/form-data" data-loadparent-url="{% url 'loadparent'%}">
+        <form action="" method="post"  enctype="multipart/form-data" ">
             {% csrf_token %}  
             <table>
                 {{form.as_table}}  
-            </table> 
-                 
+            </table>                  
             <input type="submit" value="Enregistrer" class="btn btn-primary ccc">
         </form>
     </div>

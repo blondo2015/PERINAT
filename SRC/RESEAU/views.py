@@ -2,7 +2,7 @@ from django.shortcuts import render,get_object_or_404
 from .models import *
 from .forms import *
 from .filter import *
-from . import serializers
+from .serializers import *
 from django.shortcuts import render,redirect,get_object_or_404
 from datetime import datetime
 # les classes de l'admin 
@@ -11,6 +11,7 @@ from django.contrib.auth.decorators import login_required
 from django.core.paginator import Paginator, EmptyPage,PageNotAnInteger
 
 # les classes du drf
+from rest_framework.generics  import ListCreateAPIView,RetrieveUpdateDestroyAPIView
 from rest_framework import status
 from rest_framework.authtoken.views import ObtainAuthToken
 from rest_framework.decorators import authentication_classes,permission_classes,api_view
@@ -120,8 +121,8 @@ class CustomAuthTokenlogin(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
         serializer = self.serializer_class(data=request.data,context={'request': request})
         serializer.is_valid(raise_exception=True)
-        user = serializer.validated_data['user']
-        enceinte=Enceinte.objects.get(code=user.code)
+        user = serializer.validated_data['user']        
+        enceinte=get_object_or_404(Enceinte,code=user.code)
         encuser=EncUser.objects.get(enceinte=enceinte,user=user)
         token, created = Token.objects.get_or_create(user=user)
         if user.foto:
@@ -159,26 +160,73 @@ def PAtientAPI(request,id=None):
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET','POST'])
+# @api_view(['GET','POST'])
+# @authentication_classes([TokenAuthentication])
+# @permission_classes([IsAuthenticated])
+# def apipaient(request,date_start=None):
+#     if request.method=='GET':
+#         listpatient=""
+#         if date_start is None:
+#             listpatient=Patient.objects.filter(user=request.user).all().order_by('-modified_at')
+#         else:
+#             listpatient=Patient.objects.filter(user=request.user,modified_at__gt=date_start).all().order_by('-modified_at')        
+#             serializer=serializers.Patientserialize(listpatient,many=True)
+#         return Response(serializer.data)
+     
+#     if request.method=='POST':
+#         serializer=serializers.Patientserialize(data=request.data) 
+#         if serializer.is_valid():
+#             serializer.save()
+#             return Response(serializer.data,status=status.HTTP_201_CREATED)
+#         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)    
+
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
-def apipaient(request,date_start=None):
-    if request.method=='GET':
-        listpatient=""
-        if date_start is None:
-            listpatient=Patient.objects.filter(user=request.user).all().order_by('-modified_at')
-        else:
-            listpatient=Patient.objects.filter(user=request.user,modified_at__gt=date_start).all().order_by('-modified_at')        
-        serializer=serializers.Patientserialize(listpatient,many=True)
-        return Response(serializer.data)
-     
-    if request.method=='POST':
-        serializer=serializers.Patientserialize(data=request.data) 
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data,status=status.HTTP_201_CREATED)
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)    
+class PatientListcreateApiview(ListCreateAPIView):
+    queryset=Patient.objects.all()
+    serializer_class=Patientserializer
+    def get_queryset(self):            
+       return Patient.objects.all()
     
+    
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+class PatientRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    queryset=Patient.objects.all()
+    serializer_class=Patientserializer 
+    
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+class DemandeListcreateApiview(ListCreateAPIView):
+    queryset=Demande.objects.all()
+    serializer_class=Damandeserializer
+    def get_queryset(self):              
+       return Demande.objects.filter(encuser__user=self.request.user)
+    
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+class DemandeRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    queryset=Demande.objects.all()
+    serializer_class=Referencementserializer
+       
+    
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+class RefererListcreateApiview(ListCreateAPIView):
+    queryset=Referer.objects.all()
+    serializer_class=Referencementserializer  
+    def get_queryset(self):              
+       return Referer.objects.filter(demande__encuser__user=self.request.user) 
+        
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+class RefererRetrieveUpdateDestroyAPIView(RetrieveUpdateDestroyAPIView):
+    queryset=Referer.objects.all()
+    serializer_class=Referencementserializer     
+    
+    
+     
+           
 def detailenceinte(request,id):
     if request.user.is_authenticated:
         dtl=get_object_or_404(Enceinte,id=id)
@@ -222,7 +270,7 @@ def patientfiltre(request):
         form=patientfiltreform(request.POST or None)
         if form.is_valid():
             list=Patient.objects.filter(nompatient__icontains=form.cleaned_data['rechercher'])
-            p=Paginator(list.order_by('-created_at'),10)
+            p=Paginator(list.order_by('-created'),10)
             page_numberjj = request.GET.get('page') 
             try :
                 po=p.page(page_numberjj) 
@@ -233,7 +281,7 @@ def patientfiltre(request):
             return render(request,'patient.html',{'form':form,'po':po,'user':request.user}) 
         else: 
             list=Patient.objects.all()
-            p=Paginator(list.order_by('-created_at'),10)
+            p=Paginator(list.order_by('-created'),10)
             page_number = request.GET.get('page') 
             try :
                 po=p.page(page_number) 
@@ -245,7 +293,7 @@ def patientfiltre(request):
     else:
         form=patientfiltreform()
         list=Patient.objects.all()
-        p=Paginator(list.order_by('-created_at'),10)
+        p=Paginator(list.order_by('-created'),10)
         page_number = request.GET.get('page') 
         try :
             po=p.page(page_number) 
@@ -259,7 +307,7 @@ def patientfiltre(request):
 def detailpatient(request,id):
     patient=get_object_or_404(Patient,id=id)
     liste=Referer.objects.filter(demande__patient_id=id) 
-    p=Paginator(liste.order_by('-created_at'),5)
+    p=Paginator(liste.order_by('-created'),5)
     page_number = request.GET.get('page') 
     try:
         po=p.page(page_number)   
@@ -303,8 +351,8 @@ def createservice(request,id):
                 
 @login_required            
 def listedesequipements(request):
-    liste=Appartenir.objects.all()
-    myFilter=Appartenirfilter2(request.GET,queryset=liste)
+    liste=Equipement.objects.all()
+    myFilter=EquipementFiltre(request.GET,queryset=liste)
     liste=myFilter.qs
     return render(request,'listequipement.html',{'list':liste,'user':request.user,'myFilter':myFilter})
 
@@ -322,4 +370,70 @@ def listutilisateur(request):
         po=p.page(1)
     except EmptyPage:
         po=p.page(p.num_pages) 
-    return render(request,'user.html',{'user':request.user,'po':po,'myFilter':myFilter})          
+    return render(request,'user.html',{'user':request.user,'po':po,'myFilter':myFilter})
+
+@login_required
+def loadparent(request):
+    nivo_id=request.GET['niveau']
+    nivo=Nivo.objects.get(id=nivo_id)
+    if nivo.niveau=='REGION':
+        parent=Enceinte.objects.none()
+    elif nivo.niveau=='DISTRICT':   
+        parent=Enceinte.objects.filter(niveau_niveau='REGION').order_by('+nomEnceinte')
+    elif nivo.niveau=='FOSA':   
+        parent=Enceinte.objects.filter(niveau_niveau='DISTRICT').order_by('+nomEnceinte') 
+    return render(request,'select_parent_enceint.html',{'parent':parent})   
+
+@login_required
+def EquipemmentCreate(request):
+    if request.method=='POST':
+        form=EquipementForms(request.POST or None) 
+        if form.is_valid():
+            equip=form.save()  
+            equip.compteservice()
+            equip.save()
+            form=EquipementForms()
+            return render(request,'equipementcreate.html',{
+                'msg':'enregistrement effectué avec succès',
+                'form':form,
+                'user':request.user
+            })
+        else:
+            form=EquipementForms()
+            return render(request,'equipementcreate.html',{
+                'msg':'',
+                'form':form,
+                'user':request.user
+            })
+    else:
+        form=EquipementForms()
+        return render(request,'equipementcreate.html',{
+            'msg':'',
+            'form':form,
+            'user':request.user
+        })
+        
+@login_required
+def EquipemntUpdate(request,pk):
+    equip=get_object_or_404(Equipement,pk=pk)
+    if request.method=='POST':
+        form=EquipementForms(request.POST or None,instance=equip)
+        if form.is_valid():
+            e=form.save()
+            e.compteservice()
+            e.save()
+            return redirect('listequipement')
+        else:
+            form=EquipementForms(request.POST or None,instance=equip)
+            return render(request, 'equipementUpdate.html',{'form':form,'user':request.user,'equip':equip})
+    else:
+        form=EquipementForms(request.POST or None,instance=equip)
+        return render(request, 'equipementUpdate.html',{'form':form,'user':request.user,'equip':equip})    
+            
+                
+@login_required
+def detailEquipement(request,pk):
+    equip=get_object_or_404(Equipement,pk=pk)
+    enceinte=Appartenir.objects.filter(equipement_id=pk)
+    return render(request,'DetailEquipement.html',{'equip':equip,'user':request.user,'enceinte':enceinte})
+    

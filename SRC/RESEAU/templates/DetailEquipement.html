@@ -1,0 +1,33 @@
+{% extends 'base.html'%}
+{%block page%}Detail equipement{%endblock page%}
+{%block utilisateur %}{{user.nom}} {%endblock utilisateur%}
+{% load static %}
+{%block btnAction %}
+<a href="/equipementupdate/{{dtl.id}}"><img src="{% static 'img/icone/ajouter.svg' %}" alt="Bootstrap" width="26" height="26"></a>
+<a href="/equipementupdate/{{dtl.id}}"><img src="{% static 'img/icone/modify.svg' %}" alt="Bootstrap" width="26" height="26"></a>
+<a href="{% url 'Dashboard' %}"><img src="{% static 'img/icone/printer.svg' %}" alt="Bootstrap" width="26" height="26"></a> 
+{%endblock btnAction%}
+{%block titrepage %} DETAIL EQUIPEMENT{%endblock titrepage%}
+{%block debut %}Detail de l'equipement :<strong>{{equip.nomEquip}}</strong> {%endblock debut%}
+{% block msg%}{{msg}}{%endblock msg%}
+{%block contenu %}
+<table class="table table-striped table-hover">
+    <thead>
+        <tr class="rowtitle">
+            <th >N°</th>
+            <th >SERVICE</th>
+            <th >FORMATION SANITAIRE</th>           
+        </tr>        
+    </thead>
+    <tbody>
+        {% for m in enceinte %}
+        <tr>
+            <td>{{forloop.counter}}</td>
+            <td><a href="/FosaDetail/{{m.service.enceinte.id}}">{{m.service.service}}</a></td>
+            <td>{{m.service.enceinte.nomEnceinte}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{%endblock contenu%}

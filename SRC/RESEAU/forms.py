@@ -24,11 +24,23 @@ class filtrenceinteforms(forms.ModelForm):
             'nivo':forms.Select(attrs={'class':'col-3 form-control'}),
         } '''
     
-class EnceinteForms(forms.ModelForm):
+class EnceinteForms(forms.ModelForm):   
+    code=forms.CharField(label=" code de l'enceinte")
+    nomEnceinte=forms.CharField(label="Nom de l'enceinte")
     class Meta:
         model=Enceinte
-        fields=('secteur','categorie','reseau','niveau','parent','nomEnceinte','adresse','contact1','contact2',)
+        exclude=['created_at','modified_at']
         
+        def __init__(self,*args,**kwargs):
+            super(EnceinteForms,self).__init__(*args,**kwargs)        
+            self.fields['parent'].queryset=Enceinte.objects.none()        
+            if 'niveau' in self.data:
+                if self.data['niveau']=='REGION':                
+                    self.fields['parent'].queryset=Enceinte.objects.none()
+                elif self.data['niveau']=='DISTRICT':  
+                    self.fields['parent'].queryset=Enceinte.objects.filter(niveau_niveau='REGION') 
+                elif self.data['niveau']=='FOSA':
+                    self.fields['parent'].queryset=Enceinte.objects.filter(niveau_niveau='DISTRICT') 
 class patientfiltreform(forms.Form):
     rechercher=forms.CharField(max_length=20,
                                label="",
@@ -50,6 +62,10 @@ class CreateService(forms.ModelForm):
         
 
 class EquipementForms(forms.ModelForm):
-    model=Equipement
-    fields=('__all__')        
+    nomEquip=forms.CharField(label="Equiupement", max_length=150)
+    class Meta:
+        model=Equipement
+        fields=['nomEquip' ]
+    
+           
                           

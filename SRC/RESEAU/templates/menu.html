@@ -25,6 +25,35 @@
         <div class="col-2 car"> patient 20</div>
         <div class="col-2 car"> patient 20</div>
     </div>
+    <div class="row">
+        <div class="chart-container">
+            <canvas id="barCanvas" aria-label="chart" role="img">blondo </canvas>
+        </div>
+    </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+  const ctx = document.getElementById('barCanvas');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+      datasets: [{
+        label: '# of Votes',
+        data: [12, 19, 3, 5, 2, 3],
+        borderWidth: 1
+      }]
+    },
+    options: {
+      scales: {
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  });
+</script>
     
 {%endblock contenu  %}

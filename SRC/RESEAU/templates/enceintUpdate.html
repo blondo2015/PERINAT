@@ -6,11 +6,21 @@
 {%block btnAction %}
 {%endblock btnAction%}
 {%block contenu %} 
-<form action="" class="login" method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{form.as_p}}
-    <p>
-      <input type="submit" value="Modifier" class="btn btn-success">
-    </p>   
-</form>
+<div class="row">
+  <div class="col-4"></div>
+  <div class="col-4">
+    <form action="" class="login" method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      <table>
+        {{form.as_table}}
+      </table>
+      
+      <p>
+        <input type="submit" value="Modifier" class="btn btn-success">
+      </p>   
+  </form>
+  </div>
+  <div class="col-4"></div>
+</div>
+
 {% endblock contenu %}

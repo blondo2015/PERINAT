@@ -32,6 +32,7 @@ class User(AbstractBaseUser):
     code = models.CharField(max_length=10, default="")
     nom = models.CharField(max_length=150, default="")
     telephone = models.CharField(max_length=9, unique=True)
+    email=models.EmailField(max_length=254,default="")
     dteEnrollement = models.DateField(null=True, blank=True)
     choixsexe = (
         ("F", "F"),
@@ -156,7 +157,7 @@ class Enceinte(models.Model):
 class Servico(models.Model):
     service = models.CharField(max_length=25, default="")
     cautionAdminission = models.FloatField(default=0)
-    enceinte = models.ForeignKey(Enceinte, on_delete=models.CASCADE,blank=True,null=True)
+    enceinte = models.ForeignKey(Enceinte, on_delete=models.CASCADE,blank=True,null=True,related_name='services')
     created_at = models.DateTimeField(default=datetime.now, blank=True)
     modified_at = models.DateTimeField(default=datetime.now, blank=True)
     def __str__(self):
@@ -164,17 +165,23 @@ class Servico(models.Model):
 
 
 class Equipement(models.Model):
-    nomEquip = models.CharField(max_length=50)
+    nomEquip = models.CharField(max_length=50,unique=True)
+    mesenceintes=models.IntegerField(default=0)
     created_at = models.DateTimeField(default=datetime.now, blank=True)
     modified_at = models.DateTimeField(default=datetime.now, blank=True)
 
     def __str__(self):
         return self.nomEquip
+    
+    def compteservice(self): 
+        service=Appartenir.objects.filter(equipement_id=self.id).distinct()            
+        self.mesenceintes=service.count()
+        return self.mesenceintes
 
 
 class Appartenir(models.Model):
-    service = models.ForeignKey(Servico, on_delete=models.CASCADE)
-    equipement = models.ForeignKey(Equipement, on_delete=models.CASCADE)
+    service = models.ForeignKey(Servico, on_delete=models.CASCADE,related_name='appartenirservice')
+    equipement = models.ForeignKey(Equipement, on_delete=models.CASCADE,related_name='appartenirequipement')
     pu = models.FloatField(default=0)
     periodicite = models.CharField(max_length=10)
     created_at = models.DateTimeField(default=datetime.now, blank=True)
@@ -186,18 +193,19 @@ class Appartenir(models.Model):
 class EncUser(models.Model):
     pointfocal = models.BooleanField(default=False)
     dte = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
-    enceinte = models.ForeignKey(Enceinte, on_delete=models.CASCADE, null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True,related_name='users')
+    enceinte = models.ForeignKey(Enceinte, on_delete=models.CASCADE, null=True, blank=True,related_name='enceintes')
     created_at = models.DateTimeField(default=datetime.now, blank=True)
     modified_at = models.DateTimeField(default=datetime.now, blank=True)
 
 
 class Patient(models.Model):
+    id=models.CharField(primary_key = True,editable = True,default = uuid.uuid4,unique=True,max_length=100)
     nompatient = models.CharField(max_length=250)
+    user=models.ForeignKey(User,on_delete=models.CASCADE, default=1,related_name='unuser')
     dtenaiss = models.DateField(blank=True, null=True)
     lieunaiss = models.CharField(max_length=100, null=True, default="")
     poids = models.DecimalField(max_digits=5, decimal_places=2)
-    petitpoids = models.BooleanField(default=False)
     pathologie = models.CharField(max_length=250)
     ethnie=models.CharField(max_length=15,default="")
     religion=models.CharField(max_length=15,default="")
@@ -208,20 +216,22 @@ class Patient(models.Model):
         ("M", "M"),
     )
     sexe = models.CharField(max_length=150, choices=choixsexe, default="F")
-    created_at = models.DateTimeField(default=datetime.now, blank=True)
-    modified_at = models.DateTimeField(default=datetime.now, blank=True)
+    created=models.CharField(max_length=50,default="")
+    modified=models.CharField(max_length=50,default="")
 
 
 class Demande(models.Model):
-    patient = models.ForeignKey(Patient, max_length=25, on_delete=models.CASCADE, default="")
-    encuser = models.ForeignKey(EncUser, max_length=100, on_delete=models.CASCADE, default="")    
+    id=models.CharField(primary_key = True,editable = True,default = uuid.uuid4,unique=True,max_length=100)
+    patient = models.ForeignKey(Patient, max_length=25, on_delete=models.CASCADE, default="",related_name='patients')
+    encuser = models.ForeignKey(EncUser, max_length=100, on_delete=models.CASCADE, default="",related_name='encusers')    
     detailtransport = models.CharField(max_length=150, default="")
-    created_at = models.DateTimeField(default=datetime.now, blank=True)
-    modified_at = models.DateTimeField(default=datetime.now, blank=True)
+    created=models.CharField(max_length=50,default="")
+    modified=models.CharField(max_length=50,default="")
 
 
 class Referer(models.Model): 
-    demande=models.ForeignKey(Demande,on_delete=models.CASCADE,default=1,null=True,related_name="referer")   
+    id=models.CharField(primary_key = True,editable = True,default = uuid.uuid4,unique=True,max_length=100)
+    demande=models.ForeignKey(Demande,on_delete=models.CASCADE,default=1,null=True,related_name="demandes")   
     choixTransport = (
         ("AMBULANCE", "AMBULANCE"),
         ("VEHICULE PERSONNEL", "VEHICULE PERSONNEL"),
@@ -233,5 +243,5 @@ class Referer(models.Model):
     dterefencement = models.DateField(default="")
     parent = models.ForeignKey('self', blank=True, null=True, on_delete=models.CASCADE)
     mvt_at = models.DateTimeField(auto_now_add=True)
-    created_at = models.DateTimeField(default=datetime.now, blank=True)
-    modified_at = models.DateTimeField(default=datetime.now, blank=True)
+    created=models.CharField(max_length=50,default="")
+    modified=models.CharField(max_length=50,default="")

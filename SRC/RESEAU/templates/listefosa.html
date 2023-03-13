@@ -30,12 +30,12 @@
 {%endblock debut%}
 {% load static %}
 {%block btnAction %}
-<a href="{% url 'Fosadd' %}"><img src="{% static 'img/icone/ajouter.svg' %}" alt="Bootstrap" width="26" height="26"></a> 
+<a href="{% url 'Fosadd' %}"><img src="{% static 'img/icone/ajouter.svg' %}" alt="Bootstrap" width="26" height="26" mouseover="alert('ajouter une nouvelle enceinte')";></a> 
 <a href="{% url 'Dashboard' %}"><img src="{% static 'img/icone/printer.svg' %}" alt="Bootstrap" width="26" height="26"></a> 
 {%endblock btnAction%}
 {%block contenu %} 
 
-<table class="table table-striped table-hover">
+<table class="table table-striped table-hover ">
     <thead>
         <tr class="rowtitle">
             <th >N°</th>
@@ -49,7 +49,7 @@
     </thead>
     <tbody> 
         {% for m in po.object_list %} 
-        <tr>
+        <tr >
             <td>{{forloop.counter}}</td>
             <td><a href="/FosaDetail/{{m.id}}">{{m.code}}</a> </td>
             <td>{{m.nomEnceinte}}</td>

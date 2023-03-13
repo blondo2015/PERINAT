@@ -103,6 +103,8 @@
             </div>
         </div> 
     </div>
+    {% block entetescript%}{%endblock entetescript%}    
+    <script src="{% static 'js/base.js' %}"></script>
     <script src="{% static 'js/jquery-3.6.3.min.js' %}"></script>
     <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
     {% block script%}{%endblock script%}
